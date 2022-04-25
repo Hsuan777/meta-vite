@@ -30,9 +30,9 @@ const routes = [
     component: () => import('../views/PostNewsFeed.vue'),
   },
   {
-    path: '/track',
-    name: 'trackView',
-    component: () => import('../views/TrackView.vue'),
+    path: '/following',
+    name: 'following',
+    component: () => import('../views/Following.vue'),
   },
 ];
 
