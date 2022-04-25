@@ -7,6 +7,11 @@ const routes = [
     component: import('../views/LogIn.vue'),
   },
   {
+    path: '/:id',
+    name: 'userNewsFeed',
+    component: import('../views/UserNewsFeed.vue'),
+  },
+  {
     path: '/login',
     name: 'login',
     // route level code-splitting
