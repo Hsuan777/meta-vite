@@ -34,6 +34,11 @@ const routes = [
     name: 'following',
     component: () => import('../views/Following.vue'),
   },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('../views/Settings.vue'),
+  },
 ];
 
 const router = createRouter({
