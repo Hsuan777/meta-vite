@@ -1,7 +1,6 @@
 <template>
   <div class="px-6 py-8 border border-dark border-2 rounded bg-white">
-    <!-- <input type="button" value="張貼動態" class="btn btn-primary py-4 w-100 d-block mb-6"> -->
-    <router-link class="btn btn-primary py-4 w-100 d-block mb-6"
+    <router-link class="border-shadow btn btn-primary py-4 w-100 d-block mb-6"
       to="/postnewsfeed">張貼動態</router-link>
     <ul class="list-unstyled">
       <li class="mb-5">

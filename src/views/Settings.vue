@@ -34,7 +34,7 @@
                 <p class="d-none text-danger">1. 圖片寬高比必需為 1:1，請重新輸入 </p>
                 <p class="d-none text-danger">2. 解析度寬度至少 300像素以上，請重新輸入</p>
               </div>
-              <input type="button" value="送出更新" class="btn btn-primary w-100 py-4">
+              <input type="button" value="送出更新" class="border-shadow btn btn-primary w-100 py-4">
             </div>
           </div>
           <div class="tab-pane fade py-8" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">

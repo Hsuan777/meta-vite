@@ -18,7 +18,7 @@
           </div>
         </div>
         <ul class="list-unstyled">
-          <li class="p-8 shadow-lg border border-dark border-2 rounded bg-white">
+          <li class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white">
             <div class="d-flex align-items-center mb-4">
               <img class="rounded-circle" src="https://fakeimg.pl/45x45/" alt="">
               <p class="ms-4 mb-0">name<br><span class="text-black-50">2022/1/10 12:00</span></p>

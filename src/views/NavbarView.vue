@@ -23,7 +23,7 @@
             </li>
             <li class="bg-white">
               <router-link class="dropdown-item border border-dark border-2 border-bottom-0 py-2"
-                to="/edit">修改個人資料</router-link>
+                to="/settings">修改個人資料</router-link>
             </li>
             <li class="bg-white">
               <router-link class="dropdown-item border border-dark border-2 py-2"
