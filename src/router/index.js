@@ -40,6 +40,11 @@ const routes = [
     component: () => import('../views/Settings.vue'),
   },
   {
+    path: '/likes',
+    name: 'likes',
+    component: () => import('../views/Likes.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: {
       name: 'home',
