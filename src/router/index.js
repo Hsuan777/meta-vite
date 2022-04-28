@@ -3,16 +3,6 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: import('../views/LogIn.vue'),
-  },
-  {
-    path: '/:id',
-    name: 'userNewsFeed',
-    component: import('../views/UserNewsFeed.vue'),
-  },
-  {
-    path: '/login',
     name: 'login',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -25,29 +15,41 @@ const routes = [
     component: () => import('../views/SignUp.vue'),
   },
   {
-    path: '/posts',
-    name: 'posts',
-    component: () => import('../views/PostsView.vue'),
-  },
-  {
-    path: '/postnewsfeed',
-    name: 'postnewsfeed',
-    component: () => import('../views/PostNewsFeed.vue'),
-  },
-  {
-    path: '/following',
-    name: 'following',
-    component: () => import('../views/Following.vue'),
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('../views/Settings.vue'),
-  },
-  {
-    path: '/likes',
-    name: 'likes',
-    component: () => import('../views/Likes.vue'),
+    path: '/',
+    name: 'home',
+    component: import('../views/Layout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'posts',
+        component: () => import('../views/PostsView.vue'),
+      },
+      {
+        path: ':id',
+        name: 'userNewsFeed',
+        component: import('../views/UserNewsFeed.vue'),
+      },
+      {
+        path: 'postnewsfeed',
+        name: 'postnewsfeed',
+        component: () => import('../views/PostNewsFeed.vue'),
+      },
+      {
+        path: 'following',
+        name: 'following',
+        component: () => import('../views/Following.vue'),
+      },
+      {
+        path: 'settings',
+        name: 'settings',
+        component: () => import('../views/Settings.vue'),
+      },
+      {
+        path: 'likes',
+        name: 'likes',
+        component: () => import('../views/Likes.vue'),
+      },
+    ]
   },
   {
     path: '/:pathMatch(.*)*',
