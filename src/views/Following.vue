@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-8">
         <h2 class="text-center border border-dark border-2 py-4 bg-white mb-4
-          position-relative border-overlap border-overlap-start">追蹤名單</h2>
+          position-relative border-overlap border-overlap-start fw-bold">追蹤名單</h2>
         <ul class="list-unstyled">
           <li class="border-shadow-bottom p-4 bg-white border border-dark border-2 rounded-3">
             <div class="d-flex align-items-center">

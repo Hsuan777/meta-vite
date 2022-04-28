@@ -41,3 +41,12 @@
 export default {
 };
 </script>
+
+<style lang="scss">
+  .navbar-brand {
+    font-family: 'Paytone One', sans-serif;
+  }
+  #navbarDropdown {
+    font-family: 'Azeret Mono', monospace;
+  }
+</style>

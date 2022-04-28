@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-8">
         <h2 class="text-center border border-dark border-2 py-4 bg-white mb-4
-          position-relative border-overlap border-overlap-start">修改個人資料</h2>
+          position-relative border-overlap border-overlap-start fw-bold">修改個人資料</h2>
         <nav class="ps-3">
           <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link border border-bottom-0 border-end-0 border-dark border-2 bg-white active px-6 py-2" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">暱稱修改</button>

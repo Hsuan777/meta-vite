@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-8">
         <h2 class="text-center border border-dark border-2 py-4 bg-white mb-4
-          position-relative border-overlap border-overlap-start">張貼動態</h2>
+          position-relative border-overlap border-overlap-start fw-bold">張貼動態</h2>
         <div class="p-8 shadow-lg border border-dark border-2 rounded bg-white">
           <!-- eslint-disable-next-line -->
           <label for="newsFeedTextarea" class="mb-1 d-block">貼文內容</label>
