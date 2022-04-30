@@ -21,7 +21,7 @@
           <li class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white">
             <div class="d-flex align-items-center mb-4">
               <img class="rounded-circle" src="https://fakeimg.pl/45x45/" alt="">
-              <p class="ms-4 mb-0">愛爾敏<br><span class="text-black-50">2022/1/10 12:00</span></p>
+              <p class="ms-4 mb-0">name<br><span class="text-black-50">2022/1/10 12:00</span></p>
             </div>
             <p class="mb-2">外面看起來就超冷....<br>我決定回被窩繼續睡.... </p>
             <img class="img-fluid rounded" src="https://fakeimg.pl/1024x250" alt="">

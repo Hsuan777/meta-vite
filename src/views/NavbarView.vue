@@ -19,11 +19,11 @@
             aria-labelledby="navbarDropdown">
             <li class="bg-white">
               <router-link class="dropdown-item border border-dark border-2 border-bottom-0 py-2"
-                to="/mypost">我的貼文牆</router-link>
+                to="/user">我的貼文牆</router-link>
             </li>
             <li class="bg-white">
               <router-link class="dropdown-item border border-dark border-2 border-bottom-0 py-2"
-                to="/settings">修改個人資料</router-link>
+                to="/user/settings">修改個人資料</router-link>
             </li>
             <li class="bg-white">
               <router-link class="dropdown-item border border-dark border-2 py-2"

@@ -20,32 +20,32 @@ const routes = [
     component: import('../views/Layout.vue'),
     children: [
       {
-        path: '',
+        path: 'posts',
         name: 'posts',
         component: () => import('../views/PostsView.vue'),
       },
       {
-        path: ':id',
+        path: '/:id',
         name: 'userNewsFeed',
-        component: import('../views/UserNewsFeed.vue'),
+        component: import('../views/NewsFeed.vue'),
       },
       {
-        path: 'postnewsfeed',
+        path: '/:id/postnewsfeed',
         name: 'postnewsfeed',
         component: () => import('../views/PostNewsFeed.vue'),
       },
       {
-        path: 'following',
+        path: '/:id/following',
         name: 'following',
         component: () => import('../views/Following.vue'),
       },
       {
-        path: 'settings',
+        path: '/:id/settings',
         name: 'settings',
         component: () => import('../views/Settings.vue'),
       },
       {
-        path: 'likes',
+        path: '/:id/likes',
         name: 'likes',
         component: () => import('../views/Likes.vue'),
       },
