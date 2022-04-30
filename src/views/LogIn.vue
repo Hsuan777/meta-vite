@@ -21,7 +21,7 @@
           </div>
           <p class="d-none text-danger mb-2">帳號或密碼錯誤，請重新輸入！</p>
           <input type="submit" value="登入" class="border-shadow btn btn-primary w-100 btn-block py-3 mb-2">
-          <a href="#" class="text-decoration-none">註冊帳號</a>
+          <router-link to="/signup" class="text-decoration-none">註冊帳號</router-link>
         </from>
       </div>
     </div>

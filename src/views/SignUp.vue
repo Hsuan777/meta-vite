@@ -28,7 +28,7 @@
             <p class="d-none text-danger mt-1 mb-2">密碼需至少 8 碼以上，並中英混合</p>
           </div>
           <input type="submit" value="註冊" class="btn btn-secondary w-100 btn-block py-3 mb-2">
-          <a href="#" class="text-decoration-none">登入</a>
+          <router-link to="/" class="text-decoration-none">登入</router-link>
         </from>
       </div>
     </div>
