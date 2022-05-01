@@ -1,16 +1,28 @@
 <template>
   <div class="container-fluid bg-white border-bottom border-dark border-2">
-    <NavbarView/>
+    <Navbar/>
   </div>
-  <router-view/>
+  <div class="container pt-12">
+    <div class="row">
+      <div class="col-md-8">
+        <router-view/>
+      </div>
+      <div class="col-md-4">
+        <SideNav/>
+      </div>
+    </div>
+  </div>
+  
 </template>
 
 <script>
-import NavbarView from '@/views/NavbarView.vue';
+import Navbar from '@/components/Navbar.vue';
+import SideNav from '@/components/SideNav.vue';
 
 export default {
   components: {
-    NavbarView,
+    Navbar,
+    SideNav
   },
 };
 </script>
