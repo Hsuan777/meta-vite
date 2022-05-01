@@ -4,27 +4,27 @@
       <div class="col-md-8">
         <div class="d-flex align-items-center mb-4">
           <select class="form-select border border-dark border-2 w-25 me-4 bg-white"
-            aria-label="last news feed">
-            <option selected value="last">最新貼文</option>
-            <option value="old">從舊到新</option>
+            aria-label="last news feed" @change="changeSort($event.target.value)">
+            <option selected value="desc">最新貼文</option>
+            <option value="asc">從舊到新</option>
           </select>
           <div class="input-group">
-            <input type="text" class="form-control border border-dark border-2 bg-white"
+            <input type="text" v-model="inputQuery" @keyup.enter="searchData" class="form-control border border-dark border-2 bg-white"
               placeholder="搜尋貼文"
               aria-label="search post" aria-describedby="search post">
-            <button class="btn btn-primary" type="button">
+            <button class="btn btn-primary" type="button" @click="searchData">
               <i class="bi bi-search"></i>
             </button>
           </div>
         </div>
         <ul class="list-unstyled">
-          <li class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white">
+          <li v-for="item in postsData" :key="item['_id']" class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white mb-4">
             <div class="d-flex align-items-center mb-4">
-              <img class="rounded-circle" src="https://fakeimg.pl/45x45/" alt="">
-              <p class="ms-4 mb-0">愛爾敏<br><span class="text-black-50">2022/1/10 12:00</span></p>
+              <img class="rounded-circle" :src="item.user.avatar" alt="" style="width: 45px; height: 45px;">
+              <p class="ms-4 mb-0">{{item.user.name}}<br><span class="text-black-50">{{item.createdAt}}</span></p>
             </div>
-            <p class="mb-2">外面看起來就超冷....<br>我決定回被窩繼續睡.... </p>
-            <img class="img-fluid rounded" src="https://fakeimg.pl/1024x250" alt="">
+            <p class="mb-2">{{item.content}}</p>
+            <img class="img-fluid rounded border border-dark border-2" :src="item.image" :alt="`${item.user.name}'s Image`">
           </li>
         </ul>
       </div>
@@ -35,11 +35,47 @@
   </div>
 </template>
 <script>
+import {ref, reactive, watch} from 'vue';
+import axios from 'axios';
+import moment from 'moment';
 import SideNav from '@/views/SideNav.vue';
 
 export default {
   components: {
     SideNav,
   },
+  setup() {
+    const inputQuery = ref("");
+    const currentTimeSort = ref("desc");
+    let postsData = reactive([]);
+    const apiurl = 'https://metawall.herokuapp.com/posts';
+    const getData = () => {
+      axios.get(apiurl).then((res) => {
+        updateData(res.data.data);
+      })
+    };
+    const changeSort = (timeSort) => {
+      currentTimeSort.value = timeSort;
+      const query = inputQuery.value !== "" 
+        ? `?timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
+      axios.get(apiurl + query).then((res) => {
+        updateData(res.data.data)
+      })  
+    }
+    const searchData = () => {
+      axios.get(apiurl + `?q=${inputQuery.value}&timeSort=${currentTimeSort.value}`).then((res) => {
+        updateData(res.data.data);
+      })
+    }
+    const updateData = (data) => {
+      postsData.length = 0;
+      postsData.push(...data);
+      postsData.forEach((item, index) => {
+        postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
+      })
+    }
+    getData();
+    return {inputQuery, postsData, changeSort, searchData}
+  }
 };
 </script>
