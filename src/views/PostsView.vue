@@ -16,14 +16,28 @@
       </div>
     </div>
     <ul class="list-unstyled">
-      <li v-for="item in postsData" :key="item['_id']" class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white mb-4">
-        <div class="d-flex align-items-center mb-4">
-          <img class="rounded-circle" :src="item.user.avatar" alt="" style="width: 45px; height: 45px;">
-          <p class="ms-4 mb-0">{{item.user.name}}<br><span class="text-black-50">{{item.createdAt}}</span></p>
-        </div>
-        <p class="mb-2">{{item.content}}</p>
-        <img class="img-fluid rounded border border-dark border-2" :src="item.image" :alt="`${item.user.name}'s Image`">
-      </li>
+      <template v-if="postsData.length === 0">
+        <li class="border-shadow-bottom border border-dark border-2 rounded bg-white">
+          <div class="d-flex ps-4 py-5 border-bottom border-dark border-2">
+            <span class="border border-dark bg-danger d-flex rounded-circle" style="width: 9px; height: 9px"></span>
+            <span class="border border-dark bg-warning d-flex rounded-circle mx-1" style="width: 9px; height: 9px"></span>
+            <span class="border border-dark bg-success d-flex rounded-circle" style="width: 9px; height: 9px"></span>
+          </div>
+          <div class="d-flex justify-content-center align-items-center p-8">
+            <p class="text-black-50 mb-0">找不到相關動態喔！快去新增一則動態吧！</p>
+          </div>
+        </li>
+      </template>
+      <template v-else>
+        <li v-for="item in postsData" :key="item['_id']" class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white mb-4">
+          <div class="d-flex align-items-center mb-4">
+            <img class="rounded-circle" :src="item.user.avatar" alt="" style="width: 45px; height: 45px;">
+            <p class="ms-4 mb-0">{{item.user.name}}<br><span class="text-black-50">{{item.createdAt}}</span></p>
+          </div>
+          <p class="mb-2">{{item.content}}</p>
+          <img class="img-fluid rounded border border-dark border-2" :src="item.image" :alt="`${item.user.name}'s Image`">
+        </li>
+      </template>
     </ul>
   </div>
 </template>
