@@ -4,7 +4,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: import('@/views/Layout.vue'),
+    component: () => import('@/views/Layout.vue'),
     children: [
       {
         path: '',
@@ -14,7 +14,7 @@ const routes = [
       {
         path: ':id',
         name: 'userNewsFeed',
-        component: import('@/views/NewsFeed.vue'),
+        component: () => import('@/views/NewsFeed.vue'),
       },
       {
         path: ':id/postnewsfeed',
