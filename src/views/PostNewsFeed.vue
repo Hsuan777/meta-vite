@@ -10,7 +10,7 @@
       <input ref="imageFile" type="file" class="d-none btn btn-dark px-8 py-1 mb-4" @change="uploadImageToImgul($event)">
       <input type="button" value="上傳圖片" class="btn btn-dark px-8 py-1 mb-4" @click="imageFile.click()">
       <div v-if="imageInfo.link" class="mb-8">
-        <img :src="imageInfo.link" :alt="imageInfo.name" class="image-fluid">
+        <img :src="imageInfo.link" :alt="imageInfo.name" class="img-fluid">
       </div>
       <div class="d-flex justify-content-center">
         <input type="button" class="w-50 mx-auto py-4 btn btn-secondary bg-black-50"
@@ -58,7 +58,9 @@ export default {
         content: inputContent.value
       }
       axios.post(apiurl, newPost).then((res) => {
-        if (res.data.status ===  200) {
+        console.log(res.data);
+        if (res.data.status ===  "success") {
+          imageInfo.link = ""
           inputContent.value = "";
         }
       })
