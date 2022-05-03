@@ -7,7 +7,7 @@
       <label for="newsFeedTextarea" class="mb-1 d-block">貼文內容</label>
       <textarea v-model="inputContent" name="" id="newsFeedTextarea"
         cols="30" rows="10" class="w-100 mb-4 border border-dark border-2"></textarea>
-      <input ref="imageFile" type="file" class="d-none btn btn-dark px-8 py-1 mb-4" @change="uploadImageToImgul($event)">
+      <input ref="imageFile" type="file" class="d-none btn btn-dark px-8 py-1 mb-4" @change="uploadImageToImgur($event)">
       <input type="button" value="上傳圖片" class="btn btn-dark px-8 py-1 mb-4" @click="imageFile.click()">
       <div v-if="imageInfo.link" class="mb-8">
         <img :src="imageInfo.link" :alt="imageInfo.name" class="img-fluid">
@@ -28,17 +28,17 @@ export default {
     const inputContent = ref("");
     const imageFile = ref(null);
     const imageInfo = reactive({});
-    const imgul = {
+    const imgur = {
       id: "e7bdb6b252f9fe5",
     } 
-    const uploadImageToImgul = (e) => {
+    const uploadImageToImgur = (e) => {
       const file = e.target.files[0];
       let form = new FormData();
       let settings = {
         method: "POST",
         url: "https://api.imgur.com/3/image",
         headers: {
-          Authorization: `Client-ID ${imgul.id}`
+          Authorization: `Client-ID ${imgur.id}`
         },
         mimeType: "multipart/form-data"
       };
@@ -65,7 +65,7 @@ export default {
         }
       })
     }
-    return {inputContent, imageInfo, imageFile, uploadImageToImgul, postData}
+    return {inputContent, imageInfo, imageFile, uploadImageToImgur, postData}
   }
 };
 </script>
