@@ -7,7 +7,8 @@
       <label for="newsFeedTextarea" class="mb-1 d-block">貼文內容</label>
       <textarea v-model="inputContent" name="" id="newsFeedTextarea"
         cols="30" rows="10" class="w-100 mb-4 border border-dark border-2"></textarea>
-      <input ref="imageFile" type="file" class="d-none btn btn-dark px-8 py-1 mb-4" @change="uploadImageToImgur($event)">
+      <!-- <input ref="imageFile" type="file" class="d-none btn btn-dark px-8 py-1 mb-4" @change="uploadImageToImgur($event)"> -->
+      <input ref="imageFile" type="file" name="photos" class="d-none btn btn-dark px-8 py-1 mb-4" multiple="multiple" @change="upload($event)">
       <input type="button" value="上傳圖片" class="btn btn-dark px-8 py-1 mb-4" @click="imageFile.click()">
       <div v-if="imageInfo.link" class="mb-8">
         <img :src="imageInfo.link" :alt="imageInfo.name" class="img-fluid">
@@ -51,6 +52,25 @@ export default {
         e.target.value = "";
       })
     }
+    const upload = (e) => {
+      const photos = Array.from(e.target.files);
+      const apiUrl = `${import.meta.env.VITE_API_URL}/image`
+      let form = new FormData();
+      photos.forEach((item) => {
+        form.append("photos", item);
+      })
+      let settings = {
+        method: "post",
+        url: apiUrl,
+        mimeType: "multipart/form-data"
+      };
+      settings.data = form;
+      axios(settings).then((res) => {
+        console.log(res.data);
+      }).catch((err) => {
+        console.log(err.response.data);
+      }) 
+    }
     const postData = () => {
       const newPost = {
         user: "626def88402e0ab428973045",
@@ -65,7 +85,7 @@ export default {
         }
       })
     }
-    return {inputContent, imageInfo, imageFile, uploadImageToImgur, postData}
+    return {inputContent, imageInfo, imageFile, uploadImageToImgur, postData, upload}
   }
 };
 </script>
