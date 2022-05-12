@@ -1,7 +1,8 @@
 <script setup>
   import {ref, reactive, watch} from 'vue';
   import axios from 'axios';
-  const apiURL = 'http://127.0.0.1:3005/user/signup';
+  const apiURL = `${import.meta.env.VITE_API_URL}/user/signup`;
+  console.log(apiURL);
   const userInfo = reactive({});
   const errorInfo = reactive({});
   const signup = () => {
