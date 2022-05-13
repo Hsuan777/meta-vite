@@ -35,7 +35,7 @@
             <p class="ms-4 mb-0">{{item.user.name}}<br><span class="text-black-50">{{item.createdAt}}</span></p>
           </div>
           <p class="mb-2">{{item.content}}</p>
-          <img class="img-fluid rounded border border-dark border-2" :src="item.image" :alt="`${item.user.name}'s Image`">
+          <img v-if="item.image" class="img-fluid rounded border border-dark border-2" :src="item.image" :alt="`${item.user.name}'s Image`">
         </li>
       </template>
     </ul>
