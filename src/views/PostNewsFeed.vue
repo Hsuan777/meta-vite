@@ -3,12 +3,10 @@
     <h2 class="text-center border border-dark border-2 py-4 bg-white mb-4
       position-relative border-overlap border-overlap-start fw-bold">張貼動態</h2>
     <div class="p-8 shadow-lg border border-dark border-2 rounded bg-white">
-      <!-- eslint-disable-next-line -->
       <label for="newsFeedTextarea" class="mb-1 d-block">貼文內容</label>
       <textarea v-model="inputContent" name="" id="newsFeedTextarea"
         cols="30" rows="10" class="w-100 mb-4 border border-dark border-2"></textarea>
-      <!-- <input ref="imageFile" type="file" class="d-none btn btn-dark px-8 py-1 mb-4" @change="uploadImageToImgur($event)"> -->
-      <input ref="imageFile" type="file" name="photos" class="d-none btn btn-dark px-8 py-1 mb-4" multiple="multiple" @change="upload($event)">
+      <input ref="imageFile" type="file" name="photos" class="d-none btn btn-dark px-8 py-1 mb-4" multiple="multiple">
       <input type="button" value="上傳圖片" class="btn btn-dark px-8 py-1 mb-4" @click="imageFile.click()">
       <div v-if="imageInfo.link" class="mb-8">
         <img :src="imageInfo.link" :alt="imageInfo.name" class="img-fluid">
@@ -25,7 +23,7 @@ import {ref, reactive} from 'vue';
 import axios from 'axios';
 export default {
   setup() {
-    const apiurl = "https://metawall.herokuapp.com/posts";
+    const apiUrl = `${import.meta.env.VITE_API_URL}/posts`
     const inputContent = ref("");
     const imageFile = ref(null);
     const imageInfo = reactive({});
@@ -52,40 +50,29 @@ export default {
         e.target.value = "";
       })
     }
-    const upload = (e) => {
-      const photos = Array.from(e.target.files);
-      const apiUrl = `${import.meta.env.VITE_API_URL}/image`
-      let form = new FormData();
+    const postData = () => {
+      const photos = Array.from(imageFile.value.files);
+      const form = new FormData();
       photos.forEach((item) => {
         form.append("photos", item);
       })
-      let settings = {
+      form.append("user", "626def88402e0ab428973045");
+      form.append("content", inputContent.value);
+      
+      const settings = {
         method: "post",
         url: apiUrl,
         mimeType: "multipart/form-data"
       };
       settings.data = form;
       axios(settings).then((res) => {
-        console.log(res.data);
-      }).catch((err) => {
-        console.log(err.response.data);
-      }) 
-    }
-    const postData = () => {
-      const newPost = {
-        user: "626def88402e0ab428973045",
-        image: imageInfo.link,
-        content: inputContent.value
-      }
-      axios.post(apiurl, newPost).then((res) => {
-        console.log(res.data);
         if (res.data.status ===  "success") {
           imageInfo.link = ""
           inputContent.value = "";
         }
       })
     }
-    return {inputContent, imageInfo, imageFile, uploadImageToImgur, postData, upload}
+    return {inputContent, imageInfo, imageFile, uploadImageToImgur, postData}
   }
 };
 </script>
