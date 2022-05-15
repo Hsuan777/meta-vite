@@ -15,7 +15,7 @@
   
 </template>
 
-<script>
+<!-- <script>
 import Navbar from '@/components/Navbar.vue';
 import SideNav from '@/components/SideNav.vue';
 
@@ -25,6 +25,12 @@ export default {
     SideNav
   },
 };
+</script> -->
+
+<script setup>
+import Navbar from '@/components/Navbar.vue';
+import SideNav from '@/components/SideNav.vue';
+
 </script>
 
 <style lang="scss">

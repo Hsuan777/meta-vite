@@ -1,3 +1,30 @@
+<script setup>
+  import { ref, reactive, watch } from "vue";
+  import router from '@/router';
+  import axios from "axios";
+  
+  const userInfo = reactive({});
+  const apiUrl = `${import.meta.env.VITE_API_URL}/user/signin`;
+  const hasError = ref(false);
+  const login = () => {
+    axios.post(apiUrl, userInfo).then((res) => {
+      if (res.data.status === 'success') {
+        hasError.value = false;
+        localStorage.setItem('metawall', res.data.data.user.token);
+        router.replace({ name: 'home' });
+      }
+    }).catch(() => {
+      hasError.value = true;
+    })
+  }
+  watch(() => hasError.value ,(newValue) => {
+    if (newValue) {
+      userInfo.email = "";
+      userInfo.password = "";
+    };
+  })
+</script>
+
 <template>
   <!-- eslint-disable -->
   <div class="container d-flex align-items-center vh-100">
@@ -8,21 +35,21 @@
       <div class="col-md-4 text-center">
         <h1 class="text-primary">MetaWall</h1>
         <p>到元宇宙展開全新社交圈</p>
-        <from>
+        <form @submit="login">
           <div class="form-floating mb-3">
-            <input type="email" class="form-control border-dark border-2 bg-white" id="floatingInput"
-              placeholder="name@example.com">
+            <input v-model="userInfo.email" type="email" class="form-control border-dark border-2 bg-white" id="floatingInput"
+              placeholder="name@example.com" required>
             <label for="floatingInput">Email address</label>
           </div>
           <div class="form-floating mb-5">
-            <input type="password" class="form-control border-dark border-2 bg-white"
-              id="floatingPassword" placeholder="Password">
+            <input v-model="userInfo.password" type="password" class="form-control border-dark border-2 bg-white"
+              id="floatingPassword" placeholder="Password" required>
             <label for="floatingPassword">Password</label>
           </div>
-          <p class="d-none text-danger mb-2">帳號或密碼錯誤，請重新輸入！</p>
+          <p v-if="hasError" class="text-danger mb-2">帳號或密碼錯誤，請重新輸入！</p>
           <input type="submit" value="登入" class="border-shadow btn btn-primary w-100 btn-block py-3 mb-2">
           <router-link to="/signup" class="text-decoration-none">註冊帳號</router-link>
-        </from>
+        </form>
       </div>
     </div>
   </div>
