@@ -4,47 +4,56 @@ const routes = [
   {
     path: '/',
     name: 'home',
+    redirect: '/',
     component: () => import('@/views/Layout.vue'),
     children: [
       {
         path: '',
         name: 'posts',
-        component: () => import('@/views/PostsView.vue'),
+        component: () => import('@/components/Posts.vue'),
       },
       {
-        path: ':id',
-        name: 'userNewsFeed',
-        component: () => import('@/views/NewsFeed.vue'),
+        path: 'user',
+        name: 'userPost',
+        component: () => import('@/components/UserPost.vue'),
       },
       {
-        path: ':id/postnewsfeed',
-        name: 'postnewsfeed',
-        component: () => import('@/views/PostNewsFeed.vue'),
+        path: 'person/:id',
+        name: 'PersonPost',
+        component: () => import('@/components/PersonPost.vue'),
       },
       {
-        path: ':id/following',
+        path: 'post',
+        name: 'post',
+        component: () => import('@/components/Post.vue'),
+      },
+      {
+        path: 'following',
         name: 'following',
-        component: () => import('@/views/Following.vue'),
+        component: () => import('@/components/Following.vue'),
       },
       {
-        path: ':id/settings',
+        path: 'settings',
         name: 'settings',
-        component: () => import('@/views/Settings.vue'),
+        component: () => import('@/components/Settings.vue'),
       },
       {
-        path: ':id/likes',
+        path: 'likes',
         name: 'likes',
-        component: () => import('@/views/Likes.vue'),
+        component: () => import('@/components/Likes.vue'),
+      },
+      {
+        path: '/:pathMatch(.*)*',
+        redirect: {
+          name: 'home',
+        },
       },
     ]
   },
   {
-    path: '/login',
-    name: 'login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/views/LogIn.vue'),
+    path: '/signin',
+    name: 'signin',
+    component: () => import('@/views/Signin.vue'),
   },
   {
     path: '/signup',

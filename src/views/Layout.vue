@@ -1,6 +1,33 @@
+<script setup>
+  import { onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
+  import axios from "axios";
+  import TopNav from '@/components/TopNav.vue';
+  import SideNav from '@/components/SideNav.vue';
+
+  onMounted(() => {
+    const router = useRouter();
+    const token = localStorage.getItem('metawall');
+    if (!token) return router.push({ name: 'signin' });
+    const apiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
+    const options = {
+        method: 'get',
+        url: apiUrl,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+    axios(options).then((res) => {
+      if (res.data.status === 'success') {
+        router.push({ name: 'home' });
+      }
+    }).catch(() => router.push({ name: 'signin' }))
+  })
+</script>
+
 <template>
   <div class="container-fluid bg-white border-bottom border-dark border-2">
-    <Navbar/>
+    <TopNav/>
   </div>
   <div class="container pt-12">
     <div class="row">
@@ -14,24 +41,6 @@
   </div>
   
 </template>
-
-<!-- <script>
-import Navbar from '@/components/Navbar.vue';
-import SideNav from '@/components/SideNav.vue';
-
-export default {
-  components: {
-    Navbar,
-    SideNav
-  },
-};
-</script> -->
-
-<script setup>
-import Navbar from '@/components/Navbar.vue';
-import SideNav from '@/components/SideNav.vue';
-
-</script>
 
 <style lang="scss">
 

@@ -1,8 +1,9 @@
 <script setup>
-  import { ref, reactive, watch } from "vue";
-  import router from '@/router';
+  import { ref, reactive, watch, onMounted } from "vue";
+  import { useRouter } from 'vue-router';
   import axios from "axios";
-  
+
+  const router = useRouter();
   const userInfo = reactive({});
   const apiUrl = `${import.meta.env.VITE_API_URL}/user/signin`;
   const hasError = ref(false);
@@ -22,6 +23,23 @@
       userInfo.email = "";
       userInfo.password = "";
     };
+  })
+  onMounted(() => {
+    const token = localStorage.getItem('metawall');
+    if (!token) return
+    const apiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
+    const options = {
+        method: 'get',
+        url: apiUrl,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+    axios(options).then((res) => {
+      if (res.data.status === 'success') {
+        router.push({ name: 'home' });
+      }
+    }).catch(() => router.push({ name: 'signin' }))
   })
 </script>
 

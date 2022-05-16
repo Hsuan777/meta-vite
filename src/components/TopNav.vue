@@ -1,3 +1,13 @@
+<script setup>
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+  const signout = () => {
+    localStorage.removeItem('metawall');
+    router.push({ name: 'signin' })
+  }
+</script>
+
 <template>
   <div class="container">
     <nav class="navbar navbar-expand-lg navbar-white bg-white">
@@ -23,11 +33,10 @@
             </li>
             <li class="bg-white">
               <router-link class="dropdown-item border border-dark border-2 border-bottom-0 py-2"
-                to="/user/settings">修改個人資料</router-link>
+                to="/settings">修改個人資料</router-link>
             </li>
             <li class="bg-white">
-              <router-link class="dropdown-item border border-dark border-2 py-2"
-                to="/login">登出</router-link>
+              <a class="dropdown-item border border-dark border-2 py-2" @click.prevent="signout">登出</a>
             </li>
           </ul>
         </div>
@@ -35,12 +44,6 @@
     </nav>
   </div>
 </template>
-
-<script>
-
-export default {
-};
-</script>
 
 <style lang="scss">
   .navbar-brand {
