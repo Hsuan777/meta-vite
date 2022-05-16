@@ -11,7 +11,7 @@
     axios.post(apiUrl, userInfo).then((res) => {
       if (res.data.status === 'success') {
         hasError.value = false;
-        localStorage.setItem('metawall', res.data.data.user.token);
+        localStorage.setItem('metawall', JSON.stringify(res.data.data.user));
         router.replace({ name: 'home' });
       }
     }).catch(() => {
@@ -25,21 +25,21 @@
     };
   })
   onMounted(() => {
-    const token = localStorage.getItem('metawall');
-    if (!token) return
+    const user = JSON.parse(localStorage.getItem('metawall'));
+    if (!user) return
     const apiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
     const options = {
         method: 'get',
         url: apiUrl,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
     axios(options).then((res) => {
       if (res.data.status === 'success') {
         router.push({ name: 'home' });
       }
-    }).catch(() => router.push({ name: 'signin' }))
+    })
   })
 </script>
 

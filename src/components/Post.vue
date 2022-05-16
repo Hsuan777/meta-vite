@@ -51,18 +51,21 @@ export default {
       })
     }
     const postData = () => {
+      const user = JSON.parse(localStorage.getItem('metawall'));
       const photos = Array.from(imageFile.value.files);
       const form = new FormData();
       photos.forEach((item) => {
         form.append("photos", item);
       })
-      form.append("user", "626def88402e0ab428973045");
+      form.append("user", user.id);
       form.append("content", inputContent.value);
-      
       const settings = {
         method: "post",
         url: apiUrl,
-        mimeType: "multipart/form-data"
+        mimeType: "multipart/form-data",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       };
       settings.data = form;
       axios(settings).then((res) => {

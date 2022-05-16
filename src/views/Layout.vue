@@ -7,14 +7,14 @@
 
   onMounted(() => {
     const router = useRouter();
-    const token = localStorage.getItem('metawall');
-    if (!token) return router.push({ name: 'signin' });
+    const user = JSON.parse(localStorage.getItem('metawall'));
+    if (!user) return router.push({ name: 'signin' });
     const apiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
     const options = {
         method: 'get',
         url: apiUrl,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
     axios(options).then((res) => {
