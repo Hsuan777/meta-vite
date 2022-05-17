@@ -18,64 +18,41 @@
     </div>
   </div>
 </template>
-<script>
-import {ref, reactive} from 'vue';
-import axios from 'axios';
-export default {
-  setup() {
-    const apiUrl = `${import.meta.env.VITE_API_URL}/posts`
-    const inputContent = ref("");
-    const imageFile = ref(null);
-    const imageInfo = reactive({});
-    const imgur = {
-      id: "e7bdb6b252f9fe5",
-    } 
-    const uploadImageToImgur = (e) => {
-      const file = e.target.files[0];
-      let form = new FormData();
-      let settings = {
-        method: "POST",
-        url: "https://api.imgur.com/3/image",
-        headers: {
-          Authorization: `Client-ID ${imgur.id}`
-        },
-        mimeType: "multipart/form-data"
-      };
-      form.append("image", file);
-      form.append("name", file.name);
-      settings.data = form;
-      axios(settings).then((res) => {
-        imageInfo.link = res.data.data.link;
-        imageInfo.name = res.data.data.name;
-        e.target.value = "";
-      })
-    }
-    const postData = () => {
-      const user = JSON.parse(localStorage.getItem('metawall'));
-      const photos = Array.from(imageFile.value.files);
-      const form = new FormData();
-      photos.forEach((item) => {
-        form.append("photos", item);
-      })
-      form.append("user", user.id);
-      form.append("content", inputContent.value);
-      const settings = {
-        method: "post",
-        url: apiUrl,
-        mimeType: "multipart/form-data",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      settings.data = form;
-      axios(settings).then((res) => {
-        if (res.data.status ===  "success") {
-          imageInfo.link = ""
-          inputContent.value = "";
-        }
-      })
-    }
-    return {inputContent, imageInfo, imageFile, uploadImageToImgur, postData}
+<script setup>
+  import {ref, reactive} from 'vue';
+  import axios from 'axios';
+
+  const postApiUrl = `${import.meta.env.VITE_API_URL}/posts`;
+  const userApiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
+  
+  const token = localStorage.getItem('metawall');
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  const inputContent = ref("");
+  const imageFile = ref(null);
+  const imageInfo = reactive({});
+  
+  const postData = async () => {
+    const userId = ref('');
+    await axios.get(userApiUrl).then((res) => userId.value = res.data.data._id);
+    const photos = Array.from(imageFile.value.files);
+    const form = new FormData();
+    photos.forEach((item) => {
+      form.append("photos", item);
+    })
+    form.append("user", userId);
+    form.append("content", inputContent.value);
+    const settings = {
+      method: "post",
+      url: postApiUrl,
+      mimeType: "multipart/form-data",
+    };
+    settings.data = form;
+    axios(settings).then((res) => {
+      if (res.data.status ===  "success") {
+        imageInfo.link = ""
+        inputContent.value = "";
+      }
+    })
   }
-};
 </script>

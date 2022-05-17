@@ -41,44 +41,41 @@
     </ul>
   </div>
 </template>
-<script>
-import {ref, reactive} from 'vue';
-import axios from 'axios';
-import moment from 'moment';
+<script setup>
+  import {ref, reactive} from 'vue';
+  import axios from 'axios';
+  import moment from 'moment';
+  const apiUrl = `${import.meta.env.VITE_API_URL}/posts`;
+  const token = localStorage.getItem('metawall');
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-export default {
-  setup() {
-    const inputQuery = ref("");
-    const currentTimeSort = ref("desc");
-    let postsData = reactive([]);
-    const apiurl = 'https://metawall.herokuapp.com/posts';
-    const getData = () => {
-      axios.get(apiurl).then((res) => {
-        updateData(res.data.data);
-      })
-    };
-    const changeSort = (timeSort) => {
-      currentTimeSort.value = timeSort;
-      const query = inputQuery.value !== "" 
-        ? `?timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
-      axios.get(apiurl + query).then((res) => {
-        updateData(res.data.data)
-      })  
-    }
-    const searchData = () => {
-      axios.get(apiurl + `?q=${inputQuery.value}&timeSort=${currentTimeSort.value}`).then((res) => {
-        updateData(res.data.data);
-      })
-    }
-    const updateData = (data) => {
-      postsData.length = 0;
-      postsData.push(...data);
-      postsData.forEach((item, index) => {
-        postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
-      })
-    }
-    getData();
-    return {inputQuery, postsData, changeSort, searchData}
+  const inputQuery = ref("");
+  const currentTimeSort = ref("desc");
+  let postsData = reactive([]);
+  const getData = () => {
+    axios.get(apiUrl).then((res) => {
+      updateData(res.data.data);
+    })
+  };
+  const changeSort = (timeSort) => {
+    currentTimeSort.value = timeSort;
+    const query = inputQuery.value !== "" 
+      ? `?timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
+    axios.get(apiUrl + query).then((res) => {
+      updateData(res.data.data)
+    })  
   }
-};
+  const searchData = () => {
+    axios.get(apiUrl + `?q=${inputQuery.value}&timeSort=${currentTimeSort.value}`).then((res) => {
+      updateData(res.data.data);
+    })
+  }
+  const updateData = (data) => {
+    postsData.length = 0;
+    postsData.push(...data);
+    postsData.forEach((item, index) => {
+      postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
+    })
+  }
+  getData();
 </script>

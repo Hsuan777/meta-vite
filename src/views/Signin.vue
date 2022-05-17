@@ -10,12 +10,30 @@
   const login = () => {
     axios.post(apiUrl, userInfo).then((res) => {
       if (res.data.status === 'success') {
+        const token = res.headers.authorization.split(' ')[1];
         hasError.value = false;
-        localStorage.setItem('metawall', JSON.stringify(res.data.data.user));
+        localStorage.setItem('metawall', token);
         router.replace({ name: 'home' });
       }
     }).catch(() => {
       hasError.value = true;
+    })
+  }
+  const checkSignin = () => {
+    const token = localStorage.getItem('metawall');
+    if (!token) return
+    const apiUrl = `${import.meta.env.VITE_API_URL}/user/check`;
+    const options = {
+      method: 'get',
+      url: apiUrl,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios(options).then((res) => {
+      if (res.data.status === 'success') {
+        router.push({ name: 'home' });
+      }
     })
   }
   watch(() => hasError.value ,(newValue) => {
@@ -25,21 +43,7 @@
     };
   })
   onMounted(() => {
-    const user = JSON.parse(localStorage.getItem('metawall'));
-    if (!user) return
-    const apiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
-    const options = {
-        method: 'get',
-        url: apiUrl,
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-    axios(options).then((res) => {
-      if (res.data.status === 'success') {
-        router.push({ name: 'home' });
-      }
-    })
+    checkSignin()
   })
 </script>
 

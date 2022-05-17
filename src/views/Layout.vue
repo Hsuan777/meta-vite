@@ -1,27 +1,31 @@
 <script setup>
   import { onMounted } from 'vue';
-  import { useRouter } from 'vue-router';
   import axios from "axios";
   import TopNav from '@/components/TopNav.vue';
   import SideNav from '@/components/SideNav.vue';
+import router from '../router';
 
-  onMounted(() => {
-    const router = useRouter();
-    const user = JSON.parse(localStorage.getItem('metawall'));
-    if (!user) return router.push({ name: 'signin' });
-    const apiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
+  const checkSignin = () => {
+    const token = localStorage.getItem('metawall');
+    if (!token) return
+    const apiUrl = `${import.meta.env.VITE_API_URL}/user/check`;
     const options = {
-        method: 'get',
-        url: apiUrl,
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
+      method: 'get',
+      url: apiUrl,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     axios(options).then((res) => {
       if (res.data.status === 'success') {
         router.push({ name: 'home' });
+      } else {
+        router.push({ name: 'signin'})
       }
-    }).catch(() => router.push({ name: 'signin' }))
+    })
+  }
+  onMounted(() => {
+    checkSignin
   })
 </script>
 
