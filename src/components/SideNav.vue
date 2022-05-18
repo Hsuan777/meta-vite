@@ -1,3 +1,18 @@
+<script setup>
+  import { toRefs, watch } from 'vue';
+  
+  const props = defineProps({
+    name: String,
+    avatar: String
+  })
+  const { name, avatar } = toRefs(props);
+  
+  watch(name, (newValue) => {
+    console.log(newValue);
+  })
+
+</script>
+
 <template>
   <div class="px-6 py-8 border border-dark border-2 rounded bg-white">
     <router-link class="border-shadow btn btn-primary py-4 w-100 d-block mb-6"
@@ -5,8 +20,9 @@
     <ul class="list-unstyled">
       <li class="mb-5">
         <router-link to="/user" class="d-flex align-items-center text-decoration-none link-dark">
-          <img class="img-fluid me-4 rounded-circle border border-dark border-2 d-flex" src="https://fakeimg.pl/50x50/" alt="">
-          邊緣小杰
+          <img class="img-fluid me-4 rounded-circle border border-dark border-2 d-flex" :src="avatar" :alt="name" style="width: 50px; height: 50px;">
+          <!-- <img class="img-fluid me-4 rounded-circle border border-dark border-2 d-flex" src="https://fakeimg.pl/50x50/" alt=""> -->
+          {{name}}
         </router-link>
       </li>
       <li class="mb-5">

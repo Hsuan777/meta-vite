@@ -7,13 +7,13 @@
   const userInfo = reactive({});
   const apiUrl = `${import.meta.env.VITE_API_URL}/user/signin`;
   const hasError = ref(false);
-  const login = () => {
+  const signin = () => {
     axios.post(apiUrl, userInfo).then((res) => {
       if (res.data.status === 'success') {
         const token = res.headers.authorization.split(' ')[1];
-        hasError.value = false;
         localStorage.setItem('metawall', token);
         router.replace({ name: 'home' });
+        hasError.value = false;
       }
     }).catch(() => {
       hasError.value = true;
@@ -23,14 +23,8 @@
     const token = localStorage.getItem('metawall');
     if (!token) return
     const apiUrl = `${import.meta.env.VITE_API_URL}/user/check`;
-    const options = {
-      method: 'get',
-      url: apiUrl,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    axios(options).then((res) => {
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+    axios.get(apiUrl).then((res) => {
       if (res.data.status === 'success') {
         router.push({ name: 'home' });
       }
@@ -57,7 +51,7 @@
       <div class="col-md-4 text-center">
         <h1 class="text-primary">MetaWall</h1>
         <p>到元宇宙展開全新社交圈</p>
-        <form @submit="login">
+        <form @submit.prevent="signin">
           <div class="form-floating mb-3">
             <input v-model="userInfo.email" type="email" class="form-control border-dark border-2 bg-white" id="floatingInput"
               placeholder="name@example.com" required>

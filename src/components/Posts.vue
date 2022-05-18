@@ -35,14 +35,16 @@
             <p class="ms-4 mb-0">{{item.user.name}}<br><span class="text-black-50">{{item.createdAt}}</span></p>
           </div>
           <p class="mb-2">{{item.content}}</p>
-          <img v-if="item.image" class="img-fluid rounded border border-dark border-2" :src="item.image" :alt="`${item.user.name}'s Image`">
+          <template v-if="item.image.length > 0">
+            <img v-for="image in item.image" class="img-fluid rounded border border-dark border-2 mb-2" :src="image.url" :alt="`${item.user.name}'s Image`">
+          </template>
         </li>
       </template>
     </ul>
   </div>
 </template>
 <script setup>
-  import {ref, reactive} from 'vue';
+  import {ref, reactive, onMounted} from 'vue';
   import axios from 'axios';
   import moment from 'moment';
   const apiUrl = `${import.meta.env.VITE_API_URL}/posts`;
@@ -51,7 +53,7 @@
 
   const inputQuery = ref("");
   const currentTimeSort = ref("desc");
-  let postsData = reactive([]);
+  const postsData = reactive([]);
   const getData = () => {
     axios.get(apiUrl).then((res) => {
       updateData(res.data.data);
@@ -77,5 +79,8 @@
       postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
     })
   }
-  getData();
+  onMounted(() => {
+    if (!token) return
+    getData();
+  })
 </script>
