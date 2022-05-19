@@ -38,13 +38,30 @@
           <template v-if="item.image.length > 0">
             <img v-for="image in item.image" class="img-fluid rounded border border-dark border-2 mb-2" :src="image.url" :alt="`${item.user.name}'s Image`">
           </template>
+          <div class="d-flex border-top pt-2">
+            <button @click="changeLike" class="btn btn-link text-decoration-none d-flex algin-items-center">
+              <i class="bi bi-hand-thumbs-up me-2"></i>
+              {{item.likes.length}}
+            </button>
+            <input @click="openComment(item['_id'])" type="button" value="留言" class="btn btn-link text-decoration-none">
+          </div>
+          <div v-if="currentPostId === item['_id']">
+            <p >開始留言</p>
+            <div class="input-group">
+              <!-- <img src="avatar" alt="name"> -->
+              <input type="text" v-model="inputQuery" @keyup.enter="searchData" class="form-control border border-dark border-2 bg-white"
+                placeholder="留言..."
+                aria-label="search post" aria-describedby="search post">
+              <input type="button" value="送出留言" class="btn btn-primary">
+            </div>
+          </div>
         </li>
       </template>
     </ul>
   </div>
 </template>
 <script setup>
-  import {ref, reactive, onMounted} from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import axios from 'axios';
   import moment from 'moment';
   const apiUrl = `${import.meta.env.VITE_API_URL}/posts`;
@@ -79,6 +96,11 @@
       postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
     })
   }
+  const currentPostId = ref('');
+  const openComment = (postId) => {
+    currentPostId.value = postId;
+  }
+  
   onMounted(() => {
     if (!token) return
     getData();
