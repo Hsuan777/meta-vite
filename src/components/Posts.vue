@@ -1,3 +1,54 @@
+<script setup>
+  import { ref, reactive, onMounted } from 'vue';
+  import axios from 'axios';
+  import moment from 'moment';
+  import { apiUrlStore } from '@/store/api';
+  import { authStore } from '@/store/auth';
+
+  const apiUrl = apiUrlStore();
+  const auth = authStore();
+  const token = localStorage.getItem('metawall');
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  const inputQuery = ref("");
+  const currentTimeSort = ref("desc");
+  const postsData = reactive([]);
+  const getData = () => {
+    axios.get(apiUrl.posts).then((res) => {
+      updateData(res.data.data);
+    })
+  };
+  const changeSort = (timeSort) => {
+    currentTimeSort.value = timeSort;
+    const query = inputQuery.value !== "" 
+      ? `?timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
+    axios.get(apiUrl + query).then((res) => {
+      updateData(res.data.data)
+    })  
+  }
+  const searchData = () => {
+    axios.get(apiUrl + `?q=${inputQuery.value}&timeSort=${currentTimeSort.value}`).then((res) => {
+      updateData(res.data.data);
+    })
+  }
+  const updateData = (data) => {
+    postsData.length = 0;
+    postsData.push(...data);
+    postsData.forEach((item, index) => {
+      postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
+    })
+  }
+  const currentPostId = ref('');
+  const openComment = (postId) => {
+    currentPostId.value = postId;
+  }
+  
+  onMounted(() => {
+    if (!token) return
+    getData();
+  })
+</script>
+
 <template>
   <div>
     <div class="d-flex align-items-center mb-4">
@@ -46,9 +97,8 @@
             <input @click="openComment(item['_id'])" type="button" value="留言" class="btn btn-link text-decoration-none">
           </div>
           <div v-if="currentPostId === item['_id']">
-            <p >開始留言</p>
             <div class="input-group">
-              <!-- <img src="avatar" alt="name"> -->
+              <img :src="auth.user.avatar" :alt="auth.user.name" class="rounded-circle me-3" style="width: 45px; height: 45px;">
               <input type="text" v-model="inputQuery" @keyup.enter="searchData" class="form-control border border-dark border-2 bg-white"
                 placeholder="留言..."
                 aria-label="search post" aria-describedby="search post">
@@ -60,52 +110,4 @@
     </ul>
   </div>
 </template>
-<script setup>
-  import { ref, reactive, onMounted } from 'vue';
-  import axios from 'axios';
-  import moment from 'moment';
-  import { apiUrlStore } from '@/store/api';
-  import { authStore } from '@/store/api';
-  const apiUrl = apiUrlStore();
-  const auth = authStore();
 
-  axios.defaults.headers.common.Authorization = `Bearer ${auth.token}`;
-
-  const inputQuery = ref("");
-  const currentTimeSort = ref("desc");
-  const postsData = reactive([]);
-  const getData = () => {
-    axios.get(apiUrl.posts).then((res) => {
-      updateData(res.data.data);
-    })
-  };
-  const changeSort = (timeSort) => {
-    currentTimeSort.value = timeSort;
-    const query = inputQuery.value !== "" 
-      ? `?timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
-    axios.get(apiUrl + query).then((res) => {
-      updateData(res.data.data)
-    })  
-  }
-  const searchData = () => {
-    axios.get(apiUrl + `?q=${inputQuery.value}&timeSort=${currentTimeSort.value}`).then((res) => {
-      updateData(res.data.data);
-    })
-  }
-  const updateData = (data) => {
-    postsData.length = 0;
-    postsData.push(...data);
-    postsData.forEach((item, index) => {
-      postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
-    })
-  }
-  const currentPostId = ref('');
-  const openComment = (postId) => {
-    currentPostId.value = postId;
-  }
-  
-  onMounted(() => {
-    if (!token) return
-    getData();
-  })
-</script>

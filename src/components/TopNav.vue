@@ -1,19 +1,14 @@
 <script setup>
-  import { toRefs, watch } from 'vue';
   import { useRouter } from 'vue-router';
+  import { authStore } from '@/store/auth';
+
+  const auth = authStore();
   
-  const props = defineProps({
-    avatar: String
-  })
-  const { avatar } = toRefs(props);
   const router = useRouter();
   const signout = () => {
     localStorage.removeItem('metawall');
     router.push({ name: 'signin' })
   }
-  watch(avatar, (newValue) => {
-    console.log(newValue);
-  })
 </script>
 
 <template>
@@ -28,7 +23,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="dropdown">
-          <img class="rounded-circle" :src="avatar" alt="" style="width: 30px; height: 30px;">
+          <img class="rounded-circle" :src="auth.user.avatar" alt="" style="width: 30px; height: 30px;">
           <a class="text-decoration-none" href="#" id="navbarDropdown" role="button"
           data-bs-toggle="dropdown" aria-expanded="false">
             Member

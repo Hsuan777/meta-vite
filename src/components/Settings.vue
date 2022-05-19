@@ -1,16 +1,16 @@
 <script setup>
   import { ref, reactive, watch } from 'vue';
   import axios from 'axios';
+  import { apiUrlStore } from '@/store/api';
+
+  const apiUrl = apiUrlStore();
 
   const token = localStorage.getItem('metawall');
-  const pwdApiUrl = `${import.meta.env.VITE_API_URL}/user/updatePassword`;
-  const profileApiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
-
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   const userInfo = reactive({});
   const getProfile = () => {
-    axios.get(profileApiUrl).then((res) => {
+    axios.get(apiUrl.userProfile).then((res) => {
       userInfo.name = res.data.data.name;
       userInfo.avatar = res.data.data.avatar;
       userInfo.sex = res.data.data.sex;
@@ -19,8 +19,9 @@
 
   const updateProfileMessage = ref('');
   const updateProfile = () => {
-    userInfo.avatar = 'https://thumb.fakeface.rest/thumb_female_27_5a94a297efb15caf0e3d769ce1694953e8bf33e2.jpg';
-    axios.patch(profileApiUrl, userInfo).then((res) => {
+    // userInfo.avatar = 'https://thumb.fakeface.rest/thumb_female_27_5a94a297efb15caf0e3d769ce1694953e8bf33e2.jpg';
+    userInfo.avatar = 'https://i.pinimg.com/474x/82/ab/35/82ab3533ee71daf256f23c1ccf20ad6f--avatar-maker.jpg';
+    axios.patch(apiUrl.userProfile, userInfo).then((res) => {
       if (res.data.status === 'success') {
         updateProfileMessage.value = res.data.status;
         getProfile();
@@ -39,7 +40,7 @@
     updatePwdMessage.value = '';
     const {password, confirmPassword} = pwd;
     if (password === confirmPassword) {
-      axios.post(pwdApiUrl, pwd).then((res) => {
+      axios.post(apiUrl.userUpdatePwd, pwd).then((res) => {
         pwd.password = '';
         pwd.confirmPassword = '';
         updatePwdMessage.value = res.data.status

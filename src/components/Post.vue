@@ -1,3 +1,41 @@
+<script setup>
+  import {ref, reactive} from 'vue';
+  import axios from 'axios';
+  import { apiUrlStore } from '@/store/api';
+
+  const apiUrl = apiUrlStore();
+
+  const token = localStorage.getItem('metawall');
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  const inputContent = ref("");
+  const imageFile = ref(null);
+  const imageInfo = reactive({});
+  
+  const postData = async () => {
+    const userId = await axios.get(apiUrl.userProfile).then((res) => userId.value = res.data.data._id);
+    const photos = Array.from(imageFile.value.files);
+    const form = new FormData();
+    photos.forEach((item) => {
+      form.append("photos", item);
+    })
+    form.append("user", userId);
+    form.append("content", inputContent.value);
+    const settings = {
+      method: "post",
+      url: apiUrl.posts,
+      mimeType: "multipart/form-data",
+    };
+    settings.data = form;
+    axios(settings).then((res) => {
+      if (res.data.status ===  "success") {
+        imageInfo.link = ""
+        inputContent.value = "";
+      }
+    })
+  }
+</script>
+
 <template>
   <div>
     <h2 class="text-center border border-dark border-2 py-4 bg-white mb-4
@@ -18,41 +56,3 @@
     </div>
   </div>
 </template>
-<script setup>
-  import {ref, reactive} from 'vue';
-  import axios from 'axios';
-
-  const postApiUrl = `${import.meta.env.VITE_API_URL}/posts`;
-  const userApiUrl = `${import.meta.env.VITE_API_URL}/user/profile`;
-  
-  const token = localStorage.getItem('metawall');
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-  const inputContent = ref("");
-  const imageFile = ref(null);
-  const imageInfo = reactive({});
-  
-  const postData = async () => {
-    const userId = ref('');
-    await axios.get(userApiUrl).then((res) => userId.value = res.data.data._id);
-    const photos = Array.from(imageFile.value.files);
-    const form = new FormData();
-    photos.forEach((item) => {
-      form.append("photos", item);
-    })
-    form.append("user", userId);
-    form.append("content", inputContent.value);
-    const settings = {
-      method: "post",
-      url: postApiUrl,
-      mimeType: "multipart/form-data",
-    };
-    settings.data = form;
-    axios(settings).then((res) => {
-      if (res.data.status ===  "success") {
-        imageInfo.link = ""
-        inputContent.value = "";
-      }
-    })
-  }
-</script>

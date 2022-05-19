@@ -1,16 +1,7 @@
 <script setup>
-  import { toRefs, watch } from 'vue';
-  
-  const props = defineProps({
-    name: String,
-    avatar: String
-  })
-  const { name, avatar } = toRefs(props);
-  
-  watch(name, (newValue) => {
-    console.log(newValue);
-  })
+  import { authStore } from '@/store/auth';
 
+  const auth = authStore();
 </script>
 
 <template>
@@ -20,9 +11,8 @@
     <ul class="list-unstyled">
       <li class="mb-5">
         <router-link to="/user" class="d-flex align-items-center text-decoration-none link-dark">
-          <img class="img-fluid me-4 rounded-circle border border-dark border-2 d-flex" :src="avatar" :alt="name" style="width: 50px; height: 50px;">
-          <!-- <img class="img-fluid me-4 rounded-circle border border-dark border-2 d-flex" src="https://fakeimg.pl/50x50/" alt=""> -->
-          {{name}}
+          <img class="img-fluid me-4 rounded-circle border border-dark border-2 d-flex" :src="auth.user.avatar" :alt="auth.user.name" style="width: 50px; height: 50px;">
+          {{auth.user.name}}
         </router-link>
       </li>
       <li class="mb-5">

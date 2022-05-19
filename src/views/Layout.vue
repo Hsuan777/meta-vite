@@ -4,18 +4,20 @@
   import TopNav from '@/components/TopNav.vue';
   import SideNav from '@/components/SideNav.vue';
   import { useRouter } from 'vue-router';
+  import { apiUrlStore } from '@/store/api';
+  import { authStore } from '@/store/auth';
 
+  const apiUrl = apiUrlStore();
+  const auth = authStore();
   const router = useRouter();
-  const userInfo = reactive({});
+
   const checkSignin = async () => {
     const token = localStorage.getItem('metawall');
     if (!token) return router.push({ name: 'signin'});
-    const apiUrl = `${import.meta.env.VITE_API_URL}/user/check`;
     axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    await axios.get(apiUrl).then((res) => {
+    await axios.get(apiUrl.userCheck).then((res) => {
       if (res.data.status) {
-        userInfo.name = res.data.data.name
-        userInfo.avatar = res.data.data.avatar
+        auth.user = res.data.data
       }
     }).catch(() => {
       router.push({ name: 'signin'})
@@ -26,7 +28,7 @@
 
 <template>
   <div class="container-fluid bg-white border-bottom border-dark border-2">
-    <TopNav :avatar="userInfo.avatar"/>
+    <TopNav/>
   </div>
   <div class="container pt-12">
     <div class="row">
@@ -34,7 +36,7 @@
         <router-view/>
       </div>
       <div class="col-md-4">
-        <SideNav :name="userInfo.name" :avatar="userInfo.avatar" />
+        <SideNav/>
       </div>
     </div>
   </div>
