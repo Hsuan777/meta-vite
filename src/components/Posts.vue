@@ -64,15 +64,18 @@
   import { ref, reactive, onMounted } from 'vue';
   import axios from 'axios';
   import moment from 'moment';
-  const apiUrl = `${import.meta.env.VITE_API_URL}/posts`;
-  const token = localStorage.getItem('metawall');
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  import { apiUrlStore } from '@/store/api';
+  import { authStore } from '@/store/api';
+  const apiUrl = apiUrlStore();
+  const auth = authStore();
+
+  axios.defaults.headers.common.Authorization = `Bearer ${auth.token}`;
 
   const inputQuery = ref("");
   const currentTimeSort = ref("desc");
   const postsData = reactive([]);
   const getData = () => {
-    axios.get(apiUrl).then((res) => {
+    axios.get(apiUrl.posts).then((res) => {
       updateData(res.data.data);
     })
   };
