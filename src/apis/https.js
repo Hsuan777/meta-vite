@@ -53,11 +53,11 @@ instance.interceptors.response.use(
   }
 )
 
-export default (method, url, data = null) => {
+export default (method, url, data = null, settings) => {
   method = method.toLowerCase();
   if (method === 'get') return instance.get(url, {params: data});
-  else if (method === 'post') return instance.post(url, data);
+  else if (method === 'post') return instance.post(url, data, settings);
+  else if (method === 'patch') return instance.patch(url, data);
   else if (method === 'delete') return instance.delete(url, {params: data});
-  else if (method === 'patch') return instance.delete(url, data);
   else console.log('未知的 method:' + method);
 }

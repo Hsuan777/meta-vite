@@ -2,6 +2,7 @@
   import { ref, reactive, watch } from 'vue';
   import axios from 'axios';
   import { apiUrlStore } from '@/store/api';
+  import { apiGetUserProfile, apiPatchUserProfile, apiPostUserPassword } from '@/apis/metawall.js'
 
   const apiUrl = apiUrlStore();
 
@@ -10,18 +11,17 @@
 
   const userInfo = reactive({});
   const getProfile = () => {
-    axios.get(apiUrl.userProfile).then((res) => {
+    apiGetUserProfile().then((res) => {
       userInfo.name = res.data.data.name;
       userInfo.avatar = res.data.data.avatar;
       userInfo.sex = res.data.data.sex;
     })
   }
-
   const updateProfileMessage = ref('');
   const updateProfile = () => {
     // userInfo.avatar = 'https://thumb.fakeface.rest/thumb_female_27_5a94a297efb15caf0e3d769ce1694953e8bf33e2.jpg';
     userInfo.avatar = 'https://i.pinimg.com/474x/82/ab/35/82ab3533ee71daf256f23c1ccf20ad6f--avatar-maker.jpg';
-    axios.patch(apiUrl.userProfile, userInfo).then((res) => {
+    apiPatchUserProfile(userInfo).then((res) => {
       if (res.data.status === 'success') {
         updateProfileMessage.value = res.data.status;
         getProfile();
@@ -30,23 +30,18 @@
       }
     }).catch(() => updateProfileMessage.value = "failed")
   }
-  watch(userInfo, (newVale) => {
-    updateProfileMessage.value = '';
-  })
-
+  
   const pwd = reactive({});
   const updatePwdMessage = ref('');
   const updatePassword = () => {
     updatePwdMessage.value = '';
     const {password, confirmPassword} = pwd;
     if (password === confirmPassword) {
-      axios.post(apiUrl.userUpdatePwd, pwd).then((res) => {
+      apiPostUserPassword(pwd).then((res) => {
         pwd.password = '';
         pwd.confirmPassword = '';
         updatePwdMessage.value = res.data.status
-      }).catch((err) => {
-        updatePwdMessage.value = err.response.data.message;
-      })
+      }).catch((err) => updatePwdMessage.value = err.response.data.message)
     } else {
       updatePwdMessage.value = '密碼不一致';
     }

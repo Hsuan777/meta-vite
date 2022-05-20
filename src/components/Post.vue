@@ -1,19 +1,14 @@
 <script setup>
-  import {ref, reactive} from 'vue';
-  import axios from 'axios';
-  import { apiUrlStore } from '@/store/api';
-
-  const apiUrl = apiUrlStore();
-
-  const token = localStorage.getItem('metawall');
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  import { ref, reactive, watch } from 'vue';
+  import { apiPostPosts, apiGetUserProfile } from '@/apis/metawall.js'
 
   const inputContent = ref("");
   const imageFile = ref(null);
   const imageInfo = reactive({});
+  const submitMessage = ref("");
   
   const postData = async () => {
-    const userId = await axios.get(apiUrl.userProfile).then((res) => userId.value = res.data.data._id);
+    const userId = await apiGetUserProfile().then((res) => res.data.data._id);
     const photos = Array.from(imageFile.value.files);
     const form = new FormData();
     photos.forEach((item) => {
@@ -21,19 +16,17 @@
     })
     form.append("user", userId);
     form.append("content", inputContent.value);
-    const settings = {
-      method: "post",
-      url: apiUrl.posts,
-      mimeType: "multipart/form-data",
-    };
-    settings.data = form;
-    axios(settings).then((res) => {
+    imageInfo.link = ""
+    inputContent.value = "";
+    apiPostPosts(form, {mimeType: "multipart/form-data"}).then((res) => {
       if (res.data.status ===  "success") {
-        imageInfo.link = ""
-        inputContent.value = "";
+        submitMessage.value = "success";
       }
     })
   }
+  watch(inputContent, (newValsue) => {
+    submitMessage.value = "";
+  })
 </script>
 
 <template>
@@ -52,6 +45,7 @@
       <div class="d-flex justify-content-center">
         <input type="button" class="w-50 mx-auto py-4 btn btn-secondary bg-black-50"
           value="送出貼文" @click="postData" :disabled="!inputContent">
+        <div v-if="submitMessage" class="form-text">{{submitMessage}}</div>
       </div>
     </div>
   </div>
