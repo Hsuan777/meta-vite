@@ -1,15 +1,11 @@
 <script setup>
-  import { ref, reactive, watch } from 'vue';
-  import axios from 'axios';
-  import { apiUrlStore } from '@/store/api';
-  import { apiGetUserProfile, apiPatchUserProfile, apiPostUserPassword } from '@/apis/metawall.js'
+  import { ref, reactive } from 'vue';
+  import { apiGetUserProfile, apiPatchUserProfile, apiPostUserPassword } from '@/apis/metawall.js';
+  import { authStore } from '@/store/auth';
 
-  const apiUrl = apiUrlStore();
-
-  const token = localStorage.getItem('metawall');
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-
+  const auth = authStore();
   const userInfo = reactive({});
+  const imageFile = ref(null);
   const getProfile = () => {
     apiGetUserProfile().then((res) => {
       userInfo.name = res.data.data.name;
@@ -19,11 +15,18 @@
   }
   const updateProfileMessage = ref('');
   const updateProfile = () => {
-    // userInfo.avatar = 'https://thumb.fakeface.rest/thumb_female_27_5a94a297efb15caf0e3d769ce1694953e8bf33e2.jpg';
-    userInfo.avatar = 'https://i.pinimg.com/474x/82/ab/35/82ab3533ee71daf256f23c1ccf20ad6f--avatar-maker.jpg';
-    apiPatchUserProfile(userInfo).then((res) => {
+    const photos = Array.from(imageFile.value.files);
+    const form = new FormData();
+    photos.forEach((item) => {
+      form.append("photo", item);
+    })
+    form.append("name", userInfo.name);
+    form.append("sex", userInfo.sex);
+    apiPatchUserProfile(form, {mimeType: "multipart/form-data"}).then((res) => {
       if (res.data.status === 'success') {
         updateProfileMessage.value = res.data.status;
+        auth.user.name = res.data.data.name;
+        auth.user.avatar = res.data.data.avatar;
         getProfile();
       } else {
         updateProfileMessage.value = "failed";
@@ -63,7 +66,8 @@
       <div class="tab-pane fade show active py-8" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
         <div class="d-flex flex-column align-items-center w-75 mx-auto">
           <img :src="userInfo.avatar" alt="" class="rounded-circle border border-dark border-2 d-flex mb-4" style="width: 107px; height: 107px;">
-          <input type="button" value="上傳大頭照" class="btn btn-dark px-6 py-1">
+          <input ref="imageFile" type="file" name="photos" class="d-none btn btn-dark px-8 py-1 mb-4">
+          <input type="button" value="上傳大頭照" class="btn btn-dark px-6 py-1" @click="imageFile.click()">
           <div class="w-100 mb-3">
             <label for="nickName" class="form-label text-start w-100">暱稱</label>
             <input v-model="userInfo.name" type="text" class="form-control bg-white border border-dark border-2" id="nickName" aria-describedby="emailHelp" :placeholder="userInfo.name">
