@@ -1,29 +1,16 @@
 <script setup>
-  import { reactive, onMounted } from 'vue';
-  import axios from "axios";
   import TopNav from '@/components/TopNav.vue';
   import SideNav from '@/components/SideNav.vue';
-  import { useRouter } from 'vue-router';
-  import { apiUrlStore } from '@/store/api';
   import { authStore } from '@/store/auth';
+  import { apiCheckSignin } from '@/apis/metawall.js'
 
-  const apiUrl = apiUrlStore();
   const auth = authStore();
-  const router = useRouter();
-
-  const checkSignin = async () => {
-    const token = localStorage.getItem('metawall');
-    if (!token) return router.push({ name: 'signin'});
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    await axios.get(apiUrl.userCheck).then((res) => {
-      if (res.data.status) {
-        auth.user = res.data.data
-      }
-    }).catch(() => {
-      router.push({ name: 'signin'})
-    })
-  }
-  checkSignin();
+  
+  apiCheckSignin().then((res) => {
+    if (res.data.status) {
+      auth.user = res.data.data
+    }
+  })
 </script>
 
 <template>

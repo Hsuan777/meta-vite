@@ -1,23 +1,16 @@
 <script setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive } from 'vue';
   import axios from 'axios';
   import moment from 'moment';
-  import { apiUrlStore } from '@/store/api';
   import { authStore } from '@/store/auth';
+  import { apiGetPosts } from '@/apis/metawall.js'
 
-  const apiUrl = apiUrlStore();
   const auth = authStore();
-  const token = localStorage.getItem('metawall');
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   const inputQuery = ref("");
   const currentTimeSort = ref("desc");
   const postsData = reactive([]);
-  const getData = () => {
-    axios.get(apiUrl.posts).then((res) => {
-      updateData(res.data.data);
-    })
-  };
+  
   const changeSort = (timeSort) => {
     currentTimeSort.value = timeSort;
     const query = inputQuery.value !== "" 
@@ -42,10 +35,8 @@
   const openComment = (postId) => {
     currentPostId.value = postId;
   }
-  
-  onMounted(() => {
-    if (!token) return
-    getData();
+  apiGetPosts().then((res) => {
+    updateData(res.data.data);
   })
 </script>
 

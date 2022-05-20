@@ -1,14 +1,13 @@
 <script setup>
-  import { ref, reactive, watch, onMounted } from "vue";
+  import { ref, reactive, watch } from "vue";
   import { useRouter } from 'vue-router';
-  import axios from "axios";
+  import { apiSignin } from '@/apis/metawall.js'
 
   const router = useRouter();
   const userInfo = reactive({});
-  const apiUrl = `${import.meta.env.VITE_API_URL}/user/signin`;
   const hasError = ref(false);
   const signin = () => {
-    axios.post(apiUrl, userInfo).then((res) => {
+    apiSignin(userInfo).then((res) => {
       if (res.data.status === 'success') {
         const token = res.headers.authorization.split(' ')[1];
         localStorage.setItem('metawall', token);
@@ -16,18 +15,7 @@
         hasError.value = false;
       }
     }).catch(() => {
-      hasError.value = true;
-    })
-  }
-  const checkSignin = () => {
-    const token = localStorage.getItem('metawall');
-    if (!token) return
-    const apiUrl = `${import.meta.env.VITE_API_URL}/user/check`;
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    axios.get(apiUrl).then((res) => {
-      if (res.data.status === 'success') {
-        router.push({ name: 'home' });
-      }
+      hasError.value = true
     })
   }
   watch(() => hasError.value ,(newValue) => {
@@ -35,9 +23,6 @@
       userInfo.email = "";
       userInfo.password = "";
     };
-  })
-  onMounted(() => {
-    checkSignin()
   })
 </script>
 
