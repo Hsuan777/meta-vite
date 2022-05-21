@@ -3,7 +3,7 @@
   import axios from 'axios';
   import moment from 'moment';
   import { authStore } from '@/store/auth';
-  import { apiGetPosts } from '@/apis/metawall.js'
+  import { apiGetPost, apiGetPosts, apiPostLikes } from '@/apis/metawall.js'
 
   const auth = authStore();
 
@@ -29,6 +29,23 @@
     postsData.push(...data);
     postsData.forEach((item, index) => {
       postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
+    })
+  }
+  const postLikes = (postId) => {
+    apiPostLikes(postId).then((res) => {
+      if (res.data.status === 'success'){
+        renderPostData(postId);
+      }
+    })
+  }
+  const renderPostData = (postId) => {
+    apiGetPost(postId).then((res) => {
+      if (res.data.status === 'success') {
+        postsData.forEach((item, index) => {
+          if (item._id === res.data.data._id)
+          postsData[index].likes = res.data.data.likes
+        })
+      }
     })
   }
   const currentPostId = ref('');
@@ -81,7 +98,7 @@
             <img v-for="image in item.image" class="img-fluid rounded border border-dark border-2 mb-2" :src="image.url" :alt="`${item.user.name}'s Image`">
           </template>
           <div class="d-flex border-top pt-2">
-            <button @click="changeLike" class="btn btn-link text-decoration-none d-flex algin-items-center">
+            <button @click="postLikes(item._id)" class="btn btn-link text-decoration-none d-flex algin-items-center">
               <i class="bi bi-hand-thumbs-up me-2"></i>
               {{item.likes.length}}
             </button>
