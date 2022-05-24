@@ -1,7 +1,7 @@
 <script setup>
   import { ref, reactive, watch, onMounted } from "vue";
   import { useRouter } from 'vue-router';
-  import { apiSignin } from '@/apis/metawall.js'
+  import { apiSignin } from '@/apis/metawall.js';
 
   const router = useRouter();
   const userInfo = reactive({});
@@ -18,6 +18,15 @@
       hasError.value = true
     })
   }
+  const onGoogleSignUp = (googleUser) => {
+    const apiURL = `${import.meta.env.VITE_API_URL}/user/TPSignup`;
+    // The ID token you need to pass to your backend:
+    const id_token = googleUser.getAuthResponse().id_token;
+    axios.post(apiURL, {provider: 'google'}, {headers: {'Authorization': `Bearer ${id_token}`}}).then((res) => {
+      console.log(res);
+    })
+  }
+  // 嘗試登入，若沒有此帳號則用 google 註冊
   const onGoogleSignIn = (googleUser) => {
     const profile = googleUser.getBasicProfile();
     const id_token = googleUser.getAuthResponse().id_token;
@@ -33,7 +42,7 @@
         hasError.value = false;
       }
     }).catch(() => {
-      hasError.value = true
+      onGoogleSignUp();
     })
   }
   watch(() => hasError.value ,(newValue) => {
@@ -42,7 +51,7 @@
       userInfo.password = "";
     };
   })
-  onMounted(() => {
+  const googleSignInInit = () => {
     window.gapi.load('auth2', () => {
       window.gapi.auth2.init({
         client_id: '765558807453-ocoieb5d0n5p4g5oqg49so6to75rt7d2.apps.googleusercontent.com',
@@ -62,6 +71,9 @@
         console.log(err);
       }
     });
+  }
+  onMounted(() => {
+    googleSignInInit();
   })
 </script>
 

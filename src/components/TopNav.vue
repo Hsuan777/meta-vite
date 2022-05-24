@@ -3,15 +3,17 @@
   import { authStore } from '@/store/auth';
 
   const auth = authStore();
-  
   const router = useRouter();
   const signout = () => {
     const auth2 = window.gapi.auth2.getAuthInstance();
     localStorage.removeItem('metawall');
-    router.push({ name: 'signin' })
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
+    // 登出 Google 帳號
+    window.gapi.auth2.getAuthInstance().disconnect();
+    auth2.signOut();
+    // 讓其有時間差，否則會再次登入
+    setTimeout(() => {
+      router.push({ name: 'signin' });
+    }, 1000);
   }
 </script>
 
