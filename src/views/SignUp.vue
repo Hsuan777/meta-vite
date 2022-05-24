@@ -1,8 +1,7 @@
 <script setup>
-  import {ref, reactive, watch} from 'vue';
+  import { reactive, watch, onMounted } from 'vue';
   import axios from 'axios';
   const apiURL = `${import.meta.env.VITE_API_URL}/user/signup`;
-  console.log(apiURL);
   const userInfo = reactive({});
   const errorInfo = reactive({});
   const signup = () => {
@@ -30,9 +29,39 @@
   }
   const resetForm = () => {
     Object.keys(userInfo).forEach((item) => userInfo[item] = '');
+  };
+
+  const onGoogleSignUp = (googleUser) => {
+    const apiURL = `${import.meta.env.VITE_API_URL}/user/TPSignup`;
+    // The ID token you need to pass to your backend:
+    const id_token = googleUser.getAuthResponse().id_token;
+    axios.post(apiURL, {provider: 'google'}, {headers: {'Authorization': `Bearer ${id_token}`}}).then((res) => {
+      console.log(res);
+    })
   }
   watch(() => userInfo.email ,(newValue) => {
     if (newValue) errorInfo.email = '';
+  })
+  onMounted(() => {
+    window.gapi.load('auth2', () => {
+      window.gapi.auth2.init({
+        client_id: '765558807453-ocoieb5d0n5p4g5oqg49so6to75rt7d2.apps.googleusercontent.com',
+        cookiepolicy: 'single_host_origin',
+        // 舊版本需要此插件
+        plugin_name: 'chat',
+      });
+    });
+    window.gapi.signin2.render('google-sign-in-button', {
+      scope: 'profile email',
+      width: 'auto',
+      height: 50,
+      longtitle: true,
+      theme: 'light',
+      onsuccess: onGoogleSignUp,
+      onfailure: (err) => {
+        console.log(err);
+      }
+    });
   })
 </script>
 
@@ -73,6 +102,8 @@
           <input type="submit" value="註冊" class="btn btn-secondary w-100 btn-block py-3 mb-2">
           <router-link to="/" class="text-decoration-none text-center d-block">登入</router-link>
         </form>
+        <p class="text-center my-3">or</p>
+        <div id="google-sign-in-button"></div>
       </div>
     </div>
   </div>

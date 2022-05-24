@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, watch } from "vue";
+  import { ref, reactive, watch, onMounted } from "vue";
   import { useRouter } from 'vue-router';
   import { apiSignin } from '@/apis/metawall.js'
 
@@ -18,11 +18,50 @@
       hasError.value = true
     })
   }
+  const onGoogleSignIn = (googleUser) => {
+    const profile = googleUser.getBasicProfile();
+    const id_token = googleUser.getAuthResponse().id_token;
+    const googleUserInfo = {
+      email: profile.getEmail(),
+      password: id_token
+    }
+    apiSignin(googleUserInfo).then((res) => {
+      if (res.data.status === 'success') {
+        const token = res.headers.authorization.split(' ')[1];
+        localStorage.setItem('metawall', token);
+        router.replace({ name: 'home' });
+        hasError.value = false;
+      }
+    }).catch(() => {
+      hasError.value = true
+    })
+  }
   watch(() => hasError.value ,(newValue) => {
     if (newValue) {
       userInfo.email = "";
       userInfo.password = "";
     };
+  })
+  onMounted(() => {
+    window.gapi.load('auth2', () => {
+      window.gapi.auth2.init({
+        client_id: '765558807453-ocoieb5d0n5p4g5oqg49so6to75rt7d2.apps.googleusercontent.com',
+        cookiepolicy: 'single_host_origin',
+        // 舊版本需要此插件
+        plugin_name: 'chat',
+      });
+    });
+    window.gapi.signin2.render('google-sign-in-button', {
+      scope: 'profile email',
+      width: 'auto',
+      height: 50,
+      longtitle: true,
+      theme: 'light',
+      onsuccess: onGoogleSignIn,
+      onfailure: (err) => {
+        console.log(err);
+      }
+    });
   })
 </script>
 
@@ -51,6 +90,8 @@
           <input type="submit" value="登入" class="border-shadow btn btn-primary w-100 btn-block py-3 mb-2">
           <router-link to="/signup" class="text-decoration-none">註冊帳號</router-link>
         </form>
+        <p class="my-3">or</p>
+        <div id="google-sign-in-button"></div>
       </div>
     </div>
   </div>

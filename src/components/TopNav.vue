@@ -6,8 +6,12 @@
   
   const router = useRouter();
   const signout = () => {
+    const auth2 = window.gapi.auth2.getAuthInstance();
     localStorage.removeItem('metawall');
     router.push({ name: 'signin' })
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
   }
 </script>
 
