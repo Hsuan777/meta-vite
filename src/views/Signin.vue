@@ -1,7 +1,8 @@
 <script setup>
   import { ref, reactive, watch, onMounted } from "vue";
   import { useRouter } from 'vue-router';
-  import { apiSignin } from '@/apis/metawall.js';
+  import { apiSignin, apiTPSignup, apiTPSignin } from '@/apis/metawall.js';
+import axios from "axios";
 
   const router = useRouter();
   const userInfo = reactive({});
@@ -19,22 +20,19 @@
     })
   }
   const onGoogleSignUp = (googleUser) => {
-    const apiURL = `${import.meta.env.VITE_API_URL}/user/TPSignup`;
     // The ID token you need to pass to your backend:
-    const id_token = googleUser.getAuthResponse().id_token;
-    axios.post(apiURL, {provider: 'google'}, {headers: {'Authorization': `Bearer ${id_token}`}}).then((res) => {
+    const g_token = googleUser.getAuthResponse().id_token;
+    apiTPSignup({provider: 'google'}, {headers: {'Authorization': `Bearer ${g_token}`}}).then((res) => {
       console.log(res);
     })
   }
   // 嘗試登入，若沒有此帳號則用 google 註冊
   const onGoogleSignIn = (googleUser) => {
-    const profile = googleUser.getBasicProfile();
-    const id_token = googleUser.getAuthResponse().id_token;
+    const g_token = googleUser.getAuthResponse().id_token;
     const googleUserInfo = {
-      email: profile.getEmail(),
-      password: id_token
+      provider: 'google'
     }
-    apiSignin(googleUserInfo).then((res) => {
+    apiTPSignin(googleUserInfo, {headers: {'Authorization': `Bearer ${g_token}`}}).then((res) => {
       if (res.data.status === 'success') {
         const token = res.headers.authorization.split(' ')[1];
         localStorage.setItem('metawall', token);
@@ -42,7 +40,7 @@
         hasError.value = false;
       }
     }).catch(() => {
-      onGoogleSignUp();
+      onGoogleSignUp(googleUser);
     })
   }
   watch(() => hasError.value ,(newValue) => {
