@@ -19,11 +19,17 @@ import axios from "axios";
       hasError.value = true
     })
   }
+
+  // 使用 google 註冊帳號後，嘗試 google 登入
   const onGoogleSignUp = (googleUser) => {
     // The ID token you need to pass to your backend:
     const g_token = googleUser.getAuthResponse().id_token;
     apiTPSignup({provider: 'google'}, {headers: {'Authorization': `Bearer ${g_token}`}}).then((res) => {
-      console.log(res);
+      if (res.data.status === 'success') {
+        onGoogleSignIn(googleUser);
+      }
+    }).catch((err) => {
+      console.log(err);
     })
   }
   // 嘗試登入，若沒有此帳號則用 google 註冊
