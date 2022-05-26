@@ -1,6 +1,6 @@
 import req from './https';
 
-export const apiGetPosts = () => req('get', 'posts');
+export const apiGetPosts = (query) => req('get', `posts?${query}`);
 export const apiGetPost = (id) => req('get', `posts/${id}`);
 export const apiGetUserProfile = () => req('get', 'user/profile');
 export const apiPostPosts = (params, settings) => req('post', 'posts', params, settings);

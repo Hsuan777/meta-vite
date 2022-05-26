@@ -1,6 +1,5 @@
 <script setup>
   import { ref, reactive } from 'vue';
-  import axios from 'axios';
   import moment from 'moment';
   import { authStore } from '@/store/auth';
   import { apiGetPost, apiGetPosts, apiPostLikes } from '@/apis/metawall.js'
@@ -14,15 +13,16 @@
   const changeSort = (timeSort) => {
     currentTimeSort.value = timeSort;
     const query = inputQuery.value !== "" 
-      ? `?timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
-    axios.get(apiUrl + query).then((res) => {
+      ? `timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
+    apiGetPosts(query).then((res) => {
       updateData(res.data.data)
     })  
   }
   const searchData = () => {
-    axios.get(apiUrl + `?q=${inputQuery.value}&timeSort=${currentTimeSort.value}`).then((res) => {
-      updateData(res.data.data);
-    })
+    const query = `q=${inputQuery.value}&timeSort=${currentTimeSort.value}`;
+    apiGetPosts(query).then((res) => {
+      updateData(res.data.data)
+    }) 
   }
   const updateData = (data) => {
     postsData.length = 0;
