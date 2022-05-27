@@ -6,6 +6,7 @@ export const apiGetPost = (id) => req('get', `posts/${id}`);
 export const apiPostPosts = (params, settings) => req('post', 'posts', params, settings);
 
 // posts > likes
+export const apiGetLikeList = () => req('get', `posts/user/likeList`);
 export const apiPostLikes = (id) => req('post', `posts/${id}/likes`);
 
 // user
