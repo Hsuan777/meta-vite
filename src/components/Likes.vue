@@ -2,9 +2,6 @@
   import { reactive } from 'vue';
   import moment from 'moment';
   import { apiGetLikeList, apiPostLikes, apiGetPost } from '@/apis/metawall.js';
-  import { useRouter } from 'vue-router';
-
-  const router = useRouter();
 
   const likeList = reactive([]);
   const getListList = () => {
@@ -24,13 +21,6 @@
       if (res.data.status === 'success'){
         getListList();
       }
-    })
-  }
-  const getUserPost = (postId) => {
-    apiGetPost(postId).then((res) => {
-      console.log(res.data.data);
-        router.push({ name: 'PersonPost' });
-
     })
   }
   getListList();
