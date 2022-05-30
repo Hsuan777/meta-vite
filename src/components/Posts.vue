@@ -13,9 +13,12 @@
   const changeSort = (timeSort) => {
     currentTimeSort.value = timeSort;
     const query = inputQuery.value !== "" 
-      ? `timeSort=${timeSort}&q=${inputQuery.value}` : `?timeSort=${timeSort}`;
+      ? `timeSort=${timeSort}&q=${inputQuery.value}` : `timeSort=${timeSort}`;
+    console.log(query);
     apiGetPosts(query).then((res) => {
-      updateData(res.data.data)
+      if (res.data.status === 'success') {
+        updateData(res.data.data);
+      }
     })  
   }
   const searchData = () => {
