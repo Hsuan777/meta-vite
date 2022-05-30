@@ -16,6 +16,7 @@ export const apiPostUserPassword = (params) => req('post', 'user/updatePassword'
 export const apiPatchUserProfile = (params, settings) => req('patch', 'user/profile', params, settings);
 
 // user sign_in
+export const apiSignup = (params) => req('post', 'user/signup', params);
 export const apiSignin = (params) => req('post', 'user/signin', params);
 export const apiCheckSignin = (params) => req('get', 'user/check', params);
 

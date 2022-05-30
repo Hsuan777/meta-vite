@@ -1,24 +1,31 @@
 <script setup>
-  import { reactive, watch, onMounted } from 'vue';
-  import axios from 'axios';
-  const apiURL = `${import.meta.env.VITE_API_URL}/user/signup`;
+  import { reactive, ref, watch } from 'vue';
+  import router from '@/router';
+  import { apiSignup } from '@/apis/metawall.js';
+
   const userInfo = reactive({});
   const errorInfo = reactive({});
+  const successMessage = ref('');
+
   const signup = () => {
-    if (userInfo.name.length <= 2) {
+    if (userInfo.name.length < 2) {
       errorInfo.name = '暱稱至少 2 個字元以上'
     } else errorInfo.name = '';
-    if (userInfo.password.length <= 8) {
-      errorInfo.password = '密碼需大於 8 碼';
+    if (userInfo.password.length < 8) {
+      errorInfo.password = '密碼需大於等於 8 碼';
     } else errorInfo.password = '';
     if (userInfo.confirmPassword !== userInfo.password) {
       errorInfo.confirmPassword = '密碼不一致';
     } else errorInfo.confirmPassword = '';
-    let hasError = Object.keys(errorInfo).every((item) => errorInfo[item] === '');
-    if (hasError) {
-      axios.post(apiURL, userInfo).then((res) => {
-        if (res.data.status === 200) {
+    let noError = Object.keys(errorInfo).every((item) => errorInfo[item] === '');
+    if (noError) {
+      apiSignup(userInfo).then((res) => {
+        if (res.data.status === 'success') {
           resetForm();
+          successMessage.value = '已註冊成功，請重新登入';
+          setTimeout(() => {
+            router.push({name: 'signin'});
+          }, 2000);
         }
       }).catch((res) => {
         if (res.response.data.message) {
@@ -30,7 +37,6 @@
   const resetForm = () => {
     Object.keys(userInfo).forEach((item) => userInfo[item] = '');
   };
-
   watch(() => userInfo.email ,(newValue) => {
     if (newValue) errorInfo.email = '';
   })
@@ -44,7 +50,7 @@
       </div>
       <div class="col-md-4">
         <h1 class="text-primary text-center mb-3">MetaWall</h1>
-        <form  @submit="signup">
+        <form  @submit.prevent="signup">
           <div class="form-floating mb-3">
             <input v-model="userInfo.name" type="text" class="form-control border-dark border-2 bg-white"
               id="floatingInput" placeholder="暱稱" required>
@@ -55,7 +61,6 @@
             <input  v-model="userInfo.email" type="email" class="form-control border-dark border-2 bg-white"
               id="floatingEmail" placeholder="name@example.com" required>
             <label for="floatingEmail">Email address</label>
-            <p v-if="errorInfo.email" class="text-danger mt-1 mb-2">{{errorInfo.email}}</p>
           </div>
           <div class="form-floating mb-5">
             <input v-model="userInfo.password" type="password" class="form-control border-dark border-2 bg-white"
@@ -69,6 +74,8 @@
             <label for="floatingConfirmPassword">Confirm Password</label>
             <p v-if="errorInfo.confirmPassword" class="text-danger mt-1 mb-2">{{errorInfo.confirmPassword}}</p>
           </div>
+          <p v-if="errorInfo.email" class="text-danger text-center mb-5">{{errorInfo.email}}</p>
+          <p v-if="successMessage" class="text-primary text-center mb-5">{{successMessage}}</p>
           <input type="submit" value="註冊" class="btn btn-secondary w-100 btn-block py-3 mb-2">
           <router-link to="/" class="text-decoration-none text-center d-block">登入</router-link>
         </form>
