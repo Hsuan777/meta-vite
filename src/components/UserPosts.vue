@@ -1,3 +1,28 @@
+<script setup>
+  import { ref, reactive, watch } from 'vue';
+  import moment from 'moment';
+  import { authStore } from '@/store/auth';
+  import { apiGetUserPosts } from '@/apis/metawall.js';
+
+  const auth = authStore();
+  const userPosts = reactive([]);
+  // const userId = ref(auth.user.id)
+  const getUserPosts = async (userId) => {
+    userPosts.length = 0;
+    await apiGetUserPosts(userId).then((res) => {
+      console.log(res.data);
+      userPosts.push(...res.data.data.posts);
+      
+    })
+  }
+  // watch(authStore, (newValue, oldValue) => {
+  //   console.log(newValue, oldValue);
+  //   userId.value = auth.user.id;
+  //   // getUserPosts(auth.user.id);
+  // });
+  getUserPosts(auth.user.id);
+</script>
+
 <template>
   <div>
     <div class="d-flex align-items-center mb-4">
@@ -27,8 +52,3 @@
     </ul>
   </div>
 </template>
-<script>
-
-export default {
-};
-</script>

@@ -15,7 +15,7 @@ const routes = [
       {
         path: 'user',
         name: 'userPost',
-        component: () => import('@/components/UserPost.vue'),
+        component: () => import('@/components/UserPosts.vue'),
       },
       {
         path: 'person/:id',
