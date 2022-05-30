@@ -14,7 +14,6 @@
     currentTimeSort.value = timeSort;
     const query = inputQuery.value !== "" 
       ? `timeSort=${timeSort}&q=${inputQuery.value}` : `timeSort=${timeSort}`;
-    console.log(query);
     apiGetPosts(query).then((res) => {
       if (res.data.status === 'success') {
         updateData(res.data.data);
@@ -63,16 +62,16 @@
 <template>
   <div>
     <div class="d-flex align-items-center mb-4">
-      <select class="form-select border border-dark border-2 w-25 me-4 bg-white"
-        aria-label="last news feed" @change="changeSort($event.target.value)">
+      <select @change="changeSort($event.target.value)" class="form-select border border-dark border-2 w-25 me-4 bg-white"
+        aria-label="last news feed">
         <option selected value="desc">最新貼文</option>
         <option value="asc">從舊到新</option>
       </select>
       <div class="input-group">
-        <input type="text" v-model="inputQuery" @keyup.enter="searchData" class="form-control border border-dark border-2 bg-white"
+        <input v-model="inputQuery" @keyup.enter="searchData" type="text" class="form-control border border-dark border-2 bg-white"
           placeholder="搜尋貼文"
           aria-label="search post" aria-describedby="search post">
-        <button class="btn btn-primary" type="button" @click="searchData">
+        <button @click="searchData" class="btn btn-primary" type="button">
           <i class="bi bi-search"></i>
         </button>
       </div>

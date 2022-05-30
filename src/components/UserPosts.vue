@@ -1,53 +1,75 @@
 <script setup>
-  import { ref, reactive, watch } from 'vue';
+  import { ref, reactive } from 'vue';
   import moment from 'moment';
   import { authStore } from '@/store/auth';
-  import { apiGetUserPosts } from '@/apis/metawall.js';
+  import { apiGetPosts } from '@/apis/metawall.js';
 
   const auth = authStore();
+  const inputQuery = ref("");
+  const currentTimeSort = ref("desc");
+  const userId = auth.user.id;
   const userPosts = reactive([]);
-  // const userId = ref(auth.user.id)
-  const getUserPosts = async (userId) => {
+
+  const changeSort = (timeSort) => {
+    currentTimeSort.value = timeSort;
+    const query = inputQuery.value !== "" 
+      ? `userId=${userId}&timeSort=${timeSort}&q=${inputQuery.value}` : `userId=${userId}&timeSort=${timeSort}`;
+    apiGetPosts(query).then((res) => {
+      if (res.data.status === 'success') {
+        updateData(res.data.data);
+      }
+    })  
+  }
+  const searchData = () => {
+    const query = `userId=${userId}&q=${inputQuery.value}&timeSort=${currentTimeSort.value}`;
+    apiGetPosts(query).then((res) => {
+      updateData(res.data.data)
+    }) 
+  }
+  const updateData = (data) => {
     userPosts.length = 0;
-    await apiGetUserPosts(userId).then((res) => {
-      console.log(res.data);
-      userPosts.push(...res.data.data.posts);
-      
+    userPosts.push(...data);
+    userPosts.forEach((item, index) => {
+      userPosts[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
     })
   }
-  // watch(authStore, (newValue, oldValue) => {
-  //   console.log(newValue, oldValue);
-  //   userId.value = auth.user.id;
-  //   // getUserPosts(auth.user.id);
-  // });
-  getUserPosts(auth.user.id);
+  const getUserPosts = async () => {
+    const query = `userId=${userId}`;
+    apiGetPosts(query).then((res) => {
+      updateData(res.data.data)
+    }) 
+  }
+  getUserPosts();
 </script>
 
 <template>
   <div>
     <div class="d-flex align-items-center mb-4">
-      <select class="form-select border border-dark border-2 w-25 me-4 bg-white"
+      <select @change="changeSort($event.target.value)" class="form-select border border-dark border-2 w-25 me-4 bg-white"
         aria-label="last news feed">
-        <option selected value="last">最新貼文</option>
-        <option value="old">從舊到新</option>
+        <option selected value="dasc">最新貼文</option>
+        <option value="asc">從舊到新</option>
       </select>
       <div class="input-group">
-        <input type="text" class="form-control border border-dark border-2 bg-white"
+        <input v-model="inputQuery" @keyup.enter="searchData"  type="text" class="form-control border border-dark border-2 bg-white"
           placeholder="搜尋貼文"
           aria-label="search post" aria-describedby="search post">
-        <button class="btn btn-primary" type="button">
+        <button @click="searchData" class="btn btn-primary" type="button">
           <i class="bi bi-search"></i>
         </button>
       </div>
     </div>
     <ul class="list-unstyled">
-      <li class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white">
+      <li v-for="item in userPosts" :key="item._id" class="border-shadow-bottom p-8 border border-dark border-2 rounded bg-white mb-5">
         <div class="d-flex align-items-center mb-4">
-          <img class="rounded-circle" src="https://fakeimg.pl/45x45/" alt="">
-          <p class="ms-4 mb-0">name<br><span class="text-black-50">2022/1/10 12:00</span></p>
+          <img class="rounded-circle" :src="item.user.avatar" :alt="item.user.name" style="width: 45px; height: 45px;">
+          <p class="ms-4 mb-0">{{item.user.name}}
+            <br>
+            <span class="text-black-50">{{item.createdAt}}</span>
+          </p>
         </div>
-        <p class="mb-2">外面看起來就超冷....<br>我決定回被窩繼續睡.... </p>
-        <img class="img-fluid rounded" src="https://fakeimg.pl/1024x250" alt="">
+        <p class="mb-2">{{item.content}}</p>
+        <img v-for="item in item.image" :key="item.deleteHash" class="img-fluid rounded" :src="item.url" :alt="item.deleteHash">
       </li>
     </ul>
   </div>

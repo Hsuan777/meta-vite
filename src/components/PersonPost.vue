@@ -1,25 +1,53 @@
 <script setup>
   import { ref, reactive } from 'vue';
   import moment from 'moment';
-  import { apiGetPost, apiGetUserPosts } from '@/apis/metawall.js';
+  import { apiGetPost, apiGetPosts } from '@/apis/metawall.js';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();
   const postId = route.params.id;
+  const inputQuery = ref("");
+  const currentTimeSort = ref("desc");
+  const currentUserId = ref('');
   const userPost = ref({});
   const userPosts = reactive([]);
 
+  const changeSort = (timeSort) => {
+    currentTimeSort.value = timeSort;
+    const query = inputQuery.value !== "" 
+      ? `userId=${currentUserId.value}&timeSort=${timeSort}&q=${inputQuery.value}` : `userId=${currentUserId.value}&timeSort=${timeSort}`;
+    apiGetPosts(query).then((res) => {
+      if (res.data.status === 'success') {
+        updateData(res.data.data);
+      }
+    })  
+  }
+  const searchData = () => {
+    const query = `userId=${currentUserId.value}&q=${inputQuery.value}&timeSort=${currentTimeSort.value}`;
+    apiGetPosts(query).then((res) => {
+      updateData(res.data.data)
+    }) 
+  }
+  const updateData = (data) => {
+    userPosts.length = 0;
+    userPosts.push(...data);
+    userPosts.forEach((item, index) => {
+      userPosts[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
+    })
+  }
   const getUserPost = async (postId) => {
     await apiGetPost(postId).then((res) => {
       userPost.value = {...res.data.data};
+      currentUserId.value = userPost.value.user._id
       getUserPosts(userPost.value.user._id);
+
     })
   }
   const getUserPosts = async (userId) => {
-    userPosts.length = 0;
-    await apiGetUserPosts(userId).then((res) => {
-      userPosts.push(...res.data.data.posts);
-    })
+    const query = `userId=${userId}`;
+    apiGetPosts(query).then((res) => {
+      updateData(res.data.data)
+    }) 
   }
   getUserPost(postId);
 </script>
@@ -38,16 +66,16 @@
       </div>
     </div>
     <div class="d-flex align-items-center mb-4">
-      <select class="form-select border border-dark border-2 w-25 me-4 bg-white"
+      <select @change="changeSort($event.target.value)" class="form-select border border-dark border-2 w-25 me-4 bg-white"
         aria-label="last news feed">
         <option selected value="last">最新貼文</option>
         <option value="old">從舊到新</option>
       </select>
       <div class="input-group">
-        <input type="text" class="form-control border border-dark border-2 bg-white"
+        <input v-model="inputQuery" @keyup.enter="searchData" type="text" class="form-control border border-dark border-2 bg-white"
           placeholder="搜尋貼文"
           aria-label="search post" aria-describedby="search post">
-        <button class="btn btn-primary" type="button">
+        <button @click="searchData" class="btn btn-primary" type="button">
           <i class="bi bi-search"></i>
         </button>
       </div>
@@ -75,7 +103,7 @@
           <p class="ms-4 mb-0">
             {{item?.user?.name}}
             <br>
-            <span class="text-black-50">{{moment(item.createdAt).format('YYYY/MM/DD HH:mm:ss')}}</span>
+            <span class="text-black-50">{{item.createdAt}}</span>
           </p>
         </div>
         <p class="mb-2">{{item.content}}</p>
