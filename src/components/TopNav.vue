@@ -29,10 +29,10 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="dropdown">
-          <img class="rounded-circle" :src="auth.user.avatar" alt="" style="width: 30px; height: 30px;">
+          <img class="rounded-circle me-2" :src="auth.user.avatar" :alt="auth.user.name" style="width: 30px; height: 30px;">
           <a class="text-decoration-none" href="#" id="navbarDropdown" role="button"
           data-bs-toggle="dropdown" aria-expanded="false">
-            Member
+            {{auth.user.name}}
           </a>
           <ul class="dropdown-menu dropdown-menu-end text-center
             rounded-0 py-0 border-overlap border-overlap-end"

@@ -21,7 +21,7 @@
     <h2 class="text-center border border-dark border-2 py-4 bg-white mb-4
       position-relative border-overlap border-overlap-start fw-bold">追蹤名單</h2>
     <ul class="list-unstyled">
-      <li v-for="item in followingList" :key="item._id" class="border-shadow-bottom p-4 bg-white border border-dark border-2 rounded-3">
+      <li v-for="item in followingList" :key="item._id" class="border-shadow-bottom p-4 bg-white border border-dark border-2 rounded-3 mb-5">
         <div class="d-flex align-items-center">
           <img :src="item.avatar" alt="" class="img-fluid me-4 rounded-circle" style="width: 40px; height: 40px;">
           <div class="w-100">
