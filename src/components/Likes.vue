@@ -1,7 +1,7 @@
 <script setup>
   import { reactive } from 'vue';
   import moment from 'moment';
-  import { apiGetLikeList, apiPostLikes, apiGetPost } from '@/apis/metawall.js';
+  import { apiGetLikeList, apiPostLikes } from '@/apis/metawall.js';
 
   const likeList = reactive([]);
   const getListList = () => {
@@ -12,7 +12,6 @@
         likeList.forEach((item, index) => {
           likeList[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD HH:mm:ss');
         })
-        console.log(likeList);
       }
     })
   }
@@ -33,9 +32,9 @@
     <ul class="list-unstyled">
       <li v-for="item in likeList" :key="item._id" class="border-shadow-bottom p-4 bg-white border border-dark border-2 rounded-3 mb-3">
         <div class="d-flex align-items-center">
-          <img :src="item.avatar" alt="" class="img-fluid me-4 rounded-circle">
+          <img :src="item.user.avatar" :alt="item?.user?.name" class="img-fluid me-4 rounded-circle" style="width: 40px; height: 40px;">
           <div class="w-100">
-            <p class="fw-bold mb-0">{{item?.user?.name}}</p>
+            <p class="fw-bold mb-0">{{item.user.name}}</p>
             <p class="text-black-50 mb-0">發布時間：{{item.createdAt}} </p>
           </div>
           <div class="d-flex me-6">
