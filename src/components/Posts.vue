@@ -2,7 +2,12 @@
   import { ref, reactive } from 'vue';
   import moment from 'moment';
   import { authStore } from '@/store/auth';
-  import { apiGetPost, apiGetPosts, apiPostLikes } from '@/apis/metawall.js'
+  import { 
+    apiGetPost,
+    apiGetPosts,
+    apiPostLikes,
+    apiPostComment,
+    apiDeleteComment } from '@/apis/metawall.js'
 
   const auth = authStore();
 
@@ -43,16 +48,38 @@
   const renderPostData = (postId) => {
     apiGetPost(postId).then((res) => {
       if (res.data.status === 'success') {
+        console.log(res.data.data);
         postsData.forEach((item, index) => {
-          if (item._id === res.data.data._id)
-          postsData[index].likes = res.data.data.likes
+          if (item._id === res.data.data._id) {
+            postsData[index].likes = res.data.data.likes;
+            postsData[index].comments = res.data.data.comments;
+          }
         })
       }
     })
   }
   const currentPostId = ref('');
+  const inputComment = ref('');
   const openComment = (postId) => {
     currentPostId.value = postId;
+  }
+  const postComment = (postId) => {
+    apiPostComment(postId, {comment: inputComment.value}).then((res) => {
+      if (res.data.status === 'success') {
+        renderPostData(postId);
+        inputComment.value = '';
+      }
+    }).catch((err) => {
+      console.log(err);
+      console.log('留言失敗');
+    })
+  }
+  const deleteComment = (commentId) => {
+    apiDeleteComment(commentId).then((res) => {
+      if (res.data.status === 'success') {
+        renderPostData(currentPostId.value);
+      }
+    })
   }
   apiGetPosts().then((res) => {
     updateData(res.data.data);
@@ -99,22 +126,34 @@
           <template v-if="item.image.length > 0">
             <img v-for="image in item.image" class="img-fluid rounded border border-dark border-2 mb-2" :src="image.url" :alt="`${item.user.name}'s Image`">
           </template>
-          <div class="d-flex border-top pt-2">
-            <button @click="postLikes(item._id)" class="btn btn-link text-decoration-none d-flex algin-items-center">
+          <div class="d-flex border-top pt-2 mb-5">
+            <button @click="postLikes(item['_id'])" class="btn btn-link text-decoration-none d-flex algin-items-center">
               <i class="bi bi-hand-thumbs-up me-2"></i>
               {{item.likes.length}}
             </button>
             <input @click="openComment(item['_id'])" type="button" value="留言" class="btn btn-link text-decoration-none">
           </div>
           <div v-if="currentPostId === item['_id']">
-            <div class="input-group">
+            <div class="input-group mb-5">
               <img :src="auth.user.avatar" :alt="auth.user.name" class="rounded-circle me-3" style="width: 45px; height: 45px;">
-              <input type="text" v-model="inputQuery" @keyup.enter="searchData" class="form-control border border-dark border-2 bg-white"
+              <input type="text" v-model="inputComment" @keyup.enter="postComment(item['_id'])" class="form-control border border-dark border-2 bg-white"
                 placeholder="留言..."
                 aria-label="search post" aria-describedby="search post">
-              <input type="button" value="送出留言" class="btn btn-primary">
+              <input @click="postComment(item['_id'])" type="button" value="送出留言" class="btn btn-primary">
             </div>
           </div>
+          <ul v-if="item.comments.length > 0" class="list-unstyled">
+            <li v-for="record in item.comments" class="bg-light p-4 rounded-3 mb-5">
+              <div class="d-flex align-items-center mb-1">
+                <img class="rounded-circle" :src="item.user.avatar" alt="" style="width: 45px; height: 45px;">
+                <p class="ms-4 mb-0">{{item.user.name}}<br><span class="text-black-50">{{item.createdAt}}</span></p>
+              </div>
+              <p class="ms-8 ps-7 mb-0 d-flex justify-content-between">
+                {{record.comment}}
+                <span @click="deleteComment(record._id)" class="text-secondary">刪除</span>
+              </p>
+            </li>
+          </ul>
         </li>
       </template>
     </ul>

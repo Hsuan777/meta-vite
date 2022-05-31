@@ -6,9 +6,13 @@ export const apiGetPost = (id) => req('get', `posts/${id}`);
 export const apiGetUserPosts = (userId) => req('get', `posts/user/${userId}`);
 export const apiPostPosts = (params, settings) => req('post', 'posts', params, settings);
 
-// posts > likes
+// posts likes
 export const apiGetLikeList = () => req('get', `posts/user/likeList`);
 export const apiPostLikes = (id) => req('post', `posts/${id}/likes`);
+
+// post comments
+export const apiPostComment = (postId, params) => req('post', `posts/${postId}/comment`, params);
+export const apiDeleteComment = (commentId) => req('delete', `posts/${commentId}/comment`);
 
 // user
 export const apiGetUserProfile = () => req('get', 'user/profile');
