@@ -2,7 +2,6 @@
   import { ref, reactive, watch, onMounted } from "vue";
   import { useRouter } from 'vue-router';
   import { apiSignin, apiTPSignup, apiTPSignin } from '@/apis/metawall.js';
-import axios from "axios";
 
   const router = useRouter();
   const userInfo = reactive({});

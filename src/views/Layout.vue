@@ -2,15 +2,19 @@
   import TopNav from '@/components/TopNav.vue';
   import SideNav from '@/components/SideNav.vue';
   import { authStore } from '@/store/auth';
-  import { apiCheckSignin } from '@/apis/metawall.js'
+  import { apiCheckSignin } from '@/apis/metawall.js';
+  import { useRouter } from 'vue-router';
 
   const auth = authStore();
+  const router = useRouter();
   
   apiCheckSignin().then((res) => {
     if (res.data.status) {
       auth.user = res.data.data
     }
-  })
+  }).catch(() => {
+    router.replace({ name: 'signin' });
+  }) 
 </script>
 
 <template>
