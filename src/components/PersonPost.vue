@@ -1,7 +1,13 @@
 <script setup>
   import { ref, reactive } from 'vue';
   import moment from 'moment';
-  import { apiGetPost, apiGetPosts } from '@/apis/metawall.js';
+  import { 
+    apiGetPost,
+    apiGetPosts,
+    apiPostFollow,
+    apiPostUnFollow,
+    apiFollowersList,
+    apiCheckFollow } from '@/apis/metawall.js';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();
@@ -9,6 +15,8 @@
   const inputQuery = ref("");
   const currentTimeSort = ref("desc");
   const currentUserId = ref('');
+  const followStatus = ref(false);
+  const followsCount = ref(0);
   const userPost = ref({});
   const userPosts = reactive([]);
 
@@ -32,7 +40,7 @@
     userPosts.length = 0;
     userPosts.push(...data);
     userPosts.forEach((item, index) => {
-      userPosts[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
+      userPosts[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD HH:mm:ss');
     })
   }
   const getUserPost = async (postId) => {
@@ -40,7 +48,16 @@
       userPost.value = {...res.data.data};
       currentUserId.value = userPost.value.user._id
       getUserPosts(userPost.value.user._id);
-
+      apiCheckFollow(userPost.value.user._id).then((res) => {
+        if (res.data.data === '已追蹤') {
+          followStatus.value = true;
+        } else {
+          followStatus.value = false;
+        }
+      });
+      apiFollowersList(userPost.value.user._id).then((res) => {
+        followsCount.value = res.data.data.length;
+      })
     })
   }
   const getUserPosts = async (userId) => {
@@ -48,6 +65,32 @@
     apiGetPosts(query).then((res) => {
       updateData(res.data.data)
     }) 
+  }
+
+  const follow = () => {
+    if (followStatus.value) {
+      apiPostUnFollow(currentUserId.value).then((res) => {
+        if (res.data.status === 'success') {
+          followStatus.value = !followStatus.value;
+          apiFollowersList(currentUserId.value).then((res) => {
+            followsCount.value = res.data.data.length;
+          })
+        }
+      }).catch(() => {
+        console.log('退追蹤失敗');
+      })
+    } else {
+      apiPostFollow(currentUserId.value).then((res) => {
+        if (res.data.status === 'success') {
+          followStatus.value = !followStatus.value;
+          apiFollowersList(currentUserId.value).then((res) => {
+            followsCount.value = res.data.data.length;
+          })
+        }
+      }).catch(() => {
+        console.log('追蹤失敗');
+      })
+    }
   }
   getUserPost(postId);
 </script>
@@ -60,9 +103,9 @@
         <img :src="userPost?.user?.avatar" alt="" class="img-fluid me-4">
         <div class="text-start">
           <p class="fw-bold mb-0">{{userPost?.user?.name}}</p>
-          <p class="text-black-50 mb-0">987,987 人追蹤</p>
+          <p class="text-black-50 mb-0">{{followsCount}} 人追蹤</p>
         </div>
-        <input type="button" value="追蹤" class="border-shadow btn btn-warning ms-auto me-4 py-2 px-8 border border-dark border-2">
+        <input type="button" @click="follow" :value="followStatus === false ? '追蹤': '已追蹤'" class="border-shadow btn btn-warning ms-auto me-4 py-2 px-8 border border-dark border-2">
       </div>
     </div>
     <div class="d-flex align-items-center mb-4">
