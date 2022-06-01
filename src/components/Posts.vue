@@ -35,7 +35,7 @@
     postsData.length = 0;
     postsData.push(...data);
     postsData.forEach((item, index) => {
-      postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD h:mm:ss');
+      postsData[index].createdAt = moment(item.createdAt).format('YYYY/MM/DD HH:mm:ss');
     })
   }
   const postLikes = (postId) => {
@@ -48,7 +48,6 @@
   const renderPostData = (postId) => {
     apiGetPost(postId).then((res) => {
       if (res.data.status === 'success') {
-        console.log(res.data.data);
         postsData.forEach((item, index) => {
           if (item._id === res.data.data._id) {
             postsData[index].likes = res.data.data.likes;
@@ -69,15 +68,14 @@
         renderPostData(postId);
         inputComment.value = '';
       }
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
       console.log('留言失敗');
     })
   }
-  const deleteComment = (commentId) => {
+  const deleteComment = (postId ,commentId) => {
     apiDeleteComment(commentId).then((res) => {
       if (res.data.status === 'success') {
-        renderPostData(currentPostId.value);
+        renderPostData(postId);
       }
     })
   }
@@ -133,7 +131,7 @@
             </button>
             <input @click="openComment(item['_id'])" type="button" value="留言" class="btn btn-link text-decoration-none">
           </div>
-          <div v-if="currentPostId === item['_id']">
+          <div v-show="currentPostId === item['_id']">
             <div class="input-group mb-5">
               <img :src="auth.user.avatar" :alt="auth.user.name" class="rounded-circle me-3" style="width: 45px; height: 45px;">
               <input type="text" v-model="inputComment" @keyup.enter="postComment(item['_id'])" class="form-control border border-dark border-2 bg-white"
@@ -145,12 +143,12 @@
           <ul v-if="item.comments.length > 0" class="list-unstyled">
             <li v-for="record in item.comments" class="bg-light p-4 rounded-3 mb-5">
               <div class="d-flex align-items-center mb-1">
-                <img class="rounded-circle" :src="item.user.avatar" alt="" style="width: 45px; height: 45px;">
-                <p class="ms-4 mb-0">{{item.user.name}}<br><span class="text-black-50">{{item.createdAt}}</span></p>
+                <img class="rounded-circle" :src="record.user.avatar" alt="" style="width: 45px; height: 45px;">
+                <p class="ms-4 mb-0">{{record.user.name}}<br><span class="text-black-50">{{moment(record.createdAt).format('YYYY/MM/DD HH:mm:ss')}}</span></p>
               </div>
               <p class="ms-8 ps-7 mb-0 d-flex justify-content-between">
                 {{record.comment}}
-                <span @click="deleteComment(record._id)" class="text-secondary">刪除</span>
+                <span v-if="record.user._id === auth.user.id" @click="deleteComment(item['_id'], record._id)" class="text-secondary">刪除</span>
               </p>
             </li>
           </ul>
