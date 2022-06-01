@@ -1,11 +1,13 @@
 <script setup>
   import { ref, reactive, watch, onMounted } from "vue";
   import { useRouter } from 'vue-router';
-  import { apiSignin, apiTPSignup, apiTPSignin } from '@/apis/metawall.js';
+  import { apiSignin } from '@/apis/metawall.js';
 
   const router = useRouter();
   const userInfo = reactive({});
   const hasError = ref(false);
+  const googleSignInUrl = `${import.meta.env.VITE_API_URL}/user/google`;
+
   const signin = () => {
     apiSignin(userInfo).then((res) => {
       if (res.data.status === 'success') {
@@ -19,64 +21,11 @@
     })
   }
 
-  // 使用 google 註冊帳號後，嘗試 google 登入
-  const onGoogleSignUp = (googleUser) => {
-    // The ID token you need to pass to your backend:
-    const g_token = googleUser.getAuthResponse().id_token;
-    apiTPSignup({provider: 'google'}, {headers: {'Authorization': `Bearer ${g_token}`}}).then((res) => {
-      if (res.data.status === 'success') {
-        onGoogleSignIn(googleUser);
-      }
-    }).catch((err) => {
-      console.log(err);
-    })
-  }
-  // 嘗試登入，若沒有此帳號則用 google 註冊
-  const onGoogleSignIn = (googleUser) => {
-    const g_token = googleUser.getAuthResponse().id_token;
-    const googleUserInfo = {
-      provider: 'google'
-    }
-    apiTPSignin(googleUserInfo, {headers: {'Authorization': `Bearer ${g_token}`}}).then((res) => {
-      if (res.data.status === 'success') {
-        const token = res.headers.authorization.split(' ')[1];
-        localStorage.setItem('metawall', token);
-        router.replace({ name: 'home' });
-        hasError.value = false;
-      }
-    }).catch(() => {
-      onGoogleSignUp(googleUser);
-    })
-  }
   watch(() => hasError.value ,(newValue) => {
     if (newValue) {
       userInfo.email = "";
       userInfo.password = "";
     };
-  })
-  const googleSignInInit = () => {
-    window.gapi.load('auth2', () => {
-      window.gapi.auth2.init({
-        client_id: '765558807453-ocoieb5d0n5p4g5oqg49so6to75rt7d2.apps.googleusercontent.com',
-        cookiepolicy: 'single_host_origin',
-        // 舊版本需要此插件
-        plugin_name: 'chat',
-      });
-    });
-    window.gapi.signin2.render('google-sign-in-button', {
-      scope: 'profile email',
-      width: 'auto',
-      height: 50,
-      longtitle: true,
-      theme: 'light',
-      onsuccess: onGoogleSignIn,
-      onfailure: (err) => {
-        console.log(err);
-      }
-    });
-  }
-  onMounted(() => {
-    googleSignInInit();
   })
 </script>
 
@@ -106,7 +55,7 @@
           <router-link to="/signup" class="text-decoration-none">註冊帳號</router-link>
         </form>
         <p class="my-3">or</p>
-        <div id="google-sign-in-button"></div>
+        <a :href="googleSignInUrl" class="btn btn-outline-primary">Google SignIn</a>
       </div>
     </div>
   </div>

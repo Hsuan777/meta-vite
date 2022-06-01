@@ -30,7 +30,4 @@ export const apiPostUnFollow = (userId) => req('delete', `user/${userId}/unFollo
 export const apiSignup = (params) => req('post', 'user/signup', params);
 export const apiSignin = (params) => req('post', 'user/signin', params);
 export const apiCheckSignin = (params) => req('get', 'user/check', params);
-
-// third party sign_in/sign_up
-export const apiTPSignup = (params, settings) => req('post', 'user/TPSignup', params, settings);
-export const apiTPSignin = (params, settings) => req('post', 'user/TPSignin', params, settings);
+export const apiTPCallback = (onceToken) => req('get', `user/TPcallback?onceToken=${onceToken}`);

@@ -61,6 +61,11 @@ const routes = [
     component: () => import('@/views/SignUp.vue'),
   },
   {
+    path: '/callback',
+    name: 'callback',
+    component: () => import('@/components/tools/callback.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: {
       name: 'home',
