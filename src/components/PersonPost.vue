@@ -111,8 +111,8 @@
     <div class="d-flex align-items-center mb-4">
       <select @change="changeSort($event.target.value)" class="form-select border border-dark border-2 w-25 me-4 bg-white"
         aria-label="last news feed">
-        <option selected value="last">最新貼文</option>
-        <option value="old">從舊到新</option>
+        <option selected value="dasc">最新貼文</option>
+        <option value="asc">從舊到新</option>
       </select>
       <div class="input-group">
         <input v-model="inputQuery" @keyup.enter="searchData" type="text" class="form-control border border-dark border-2 bg-white"
