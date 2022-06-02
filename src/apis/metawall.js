@@ -3,7 +3,6 @@ import req from './https';
 // posts
 export const apiGetPosts = (query) => req('get', `posts?${query}`);
 export const apiGetPost = (id) => req('get', `posts/${id}`);
-export const apiGetUserPosts = (userId) => req('get', `posts/user/${userId}`);
 export const apiPostPosts = (params, settings) => req('post', 'posts', params, settings);
 
 // posts likes
