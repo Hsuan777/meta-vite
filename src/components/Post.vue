@@ -1,7 +1,9 @@
 <script setup>
   import { ref, reactive, watch } from 'vue';
-  import { apiPostPosts, apiGetUserProfile } from '@/apis/metawall.js'
+  import { apiPostPosts, apiGetUserProfile } from '@/apis/metawall.js';
+  import { useRouter } from 'vue-router';
 
+  const router = useRouter();
   const inputContent = ref("");
   const imageFile = ref(null);
   const submitMessage = ref("");
@@ -23,6 +25,8 @@
     apiPostPosts(form, {mimeType: "multipart/form-data"}).then((res) => {
       if (res.data.status ===  "success") {
         submitMessage.value = "success";
+        imagePreviewInfo.imagesBase64.length = 0;
+        router.push({ name: 'home' });
       }
     })
   }
