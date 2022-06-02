@@ -79,7 +79,7 @@
       }
     })
   }
-  apiGetPosts().then((res) => {
+  apiGetPosts(inputQuery.vlaue).then((res) => {
     updateData(res.data.data);
   })
 </script>
