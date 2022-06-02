@@ -9,7 +9,9 @@
     apiFollowersList,
     apiCheckFollow } from '@/apis/metawall.js';
   import { useRoute } from 'vue-router';
+  import { authStore } from '@/store/auth';
 
+  const auth = authStore();
   const route = useRoute();
   const postId = route.params.id;
   const inputQuery = ref("");
@@ -63,7 +65,7 @@
   const getUserPosts = async (userId) => {
     const query = `userId=${userId}`;
     apiGetPosts(query).then((res) => {
-      updateData(res.data.data)
+      updateData(res.data.data);
     }) 
   }
 
@@ -100,12 +102,12 @@
     <div class="text-center border border-dark border-2 bg-white mb-4
       position-relative border-overlap border-overlap-start fw-bold">
       <div class="d-flex align-items-center">
-        <img :src="userPost?.user?.avatar" alt="" class="img-fluid me-4">
+        <img :src="userPost?.user?.avatar" :alt="userPost?.user?.name" class="img-fluid me-4">
         <div class="text-start">
           <p class="fw-bold mb-0">{{userPost?.user?.name}}</p>
           <p class="text-black-50 mb-0">{{followsCount}} 人追蹤</p>
         </div>
-        <input type="button" @click="follow" :value="followStatus === false ? '追蹤': '已追蹤'" class="border-shadow btn btn-warning ms-auto me-4 py-2 px-8 border border-dark border-2">
+        <input v-if="userPost.user?._id !== auth.user.id" type="button" @click="follow" :value="followStatus === false ? '追蹤': '已追蹤'" class="border-shadow btn btn-warning ms-auto me-4 py-2 px-8 border border-dark border-2">
       </div>
     </div>
     <div class="d-flex align-items-center mb-4">

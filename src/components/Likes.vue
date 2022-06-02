@@ -4,7 +4,7 @@
   import { apiGetLikeList, apiPostLikes } from '@/apis/metawall.js';
 
   const likeList = reactive([]);
-  const getListList = () => {
+  const getLikeList = () => {
     apiGetLikeList().then((res) => {
       if (res.data.status === 'success') {
         likeList.length = 0;
@@ -18,11 +18,11 @@
   const cancelLike = (postId) => {
     apiPostLikes(postId).then((res) => {
       if (res.data.status === 'success'){
-        getListList();
+        getLikeList();
       }
     })
   }
-  getListList();
+  getLikeList();
 </script>
 
 <template>
@@ -34,8 +34,13 @@
         <div class="d-flex align-items-center">
           <img :src="item.user.avatar" :alt="item?.user?.name" class="img-fluid me-4 rounded-circle" style="width: 40px; height: 40px;">
           <div class="w-100">
-            <p class="fw-bold mb-0">{{item.user.name}}</p>
-            <p class="text-black-50 mb-0">發布時間：{{item.createdAt}} </p>
+            <p class="fw-bold mb-0">
+              {{item.user.name}} 
+            </p>
+            <p class="mb-0 d-flex align-items-center">
+              <span class="text-black-50">發布時間：{{item.createdAt}} </span>
+              <span class="d-inline-block text-truncate w-50">『{{item.content}}』</span>
+            </p>
           </div>
           <div class="d-flex me-6">
             <button @click="cancelLike(item._id)" class="btn btn-link text-decoration-none fw-bold">

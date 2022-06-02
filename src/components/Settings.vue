@@ -20,7 +20,7 @@
     photos.forEach((item) => {
       form.append("photo", item);
     })
-    form.append("name", userInfo.name);
+    form.append("name", userInfo.name.trim());
     form.append("sex", userInfo.sex);
     apiPatchUserProfile(form, {mimeType: "multipart/form-data"}).then((res) => {
       if (res.data.status === 'success') {
@@ -31,7 +31,9 @@
       } else {
         updateProfileMessage.value = "failed";
       }
-    }).catch(() => updateProfileMessage.value = "failed")
+    }).catch(() => {
+      updateProfileMessage.value = "failed"
+    })
   }
   
   const pwd = reactive({});
