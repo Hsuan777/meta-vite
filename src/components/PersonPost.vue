@@ -145,7 +145,7 @@
           </p>
         </div>
         <p class="mb-2">{{userPost.content}}</p>
-        <img v-for="item in userPost.image" :key="item.deleteHash" class="img-fluid rounded" :src="item.url" :alt="item.deleteHash">
+        <img v-for="item in userPost.image" :key="item.deleteHash" class="img-fluid rounded mb-2" :src="item.url" :alt="item.deleteHash">
       </li>
       <!-- 其他貼文 -->
       <span class="text-black-50">其他貼文</span>
@@ -159,7 +159,7 @@
           </p>
         </div>
         <p class="mb-2">{{item.content}}</p>
-        <img v-for="item in item.image" :key="item.deleteHash" class="img-fluid rounded" :src="item.url" :alt="item.deleteHash">
+        <img v-for="item in item.image" :key="item.deleteHash" class="img-fluid rounded mb-0" :src="item.url" :alt="item.deleteHash">
       </li>
     </ul>
   </div>
