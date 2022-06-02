@@ -107,7 +107,14 @@
           <p class="fw-bold mb-0">{{userPost?.user?.name}}</p>
           <p class="text-black-50 mb-0">{{followsCount}} 人追蹤</p>
         </div>
-        <input v-if="userPost.user?._id !== auth.user.id" type="button" @click="follow" :value="followStatus === false ? '追蹤': '已追蹤'" class="border-shadow btn btn-warning ms-auto me-4 py-2 px-8 border border-dark border-2">
+        <input 
+          v-if="userPost.user?._id !== auth.user.id"
+          @click="follow" 
+          type="button"
+          :value="followStatus === false ? '追蹤': '取消追蹤'"
+          class="border-shadow btn ms-auto me-4 py-2 px-8 border border-dark border-2"
+          :class="followStatus === false ? 'btn-warning': 'btn-secondary'"
+        >
       </div>
     </div>
     <div class="d-flex align-items-center mb-4">
