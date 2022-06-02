@@ -6,6 +6,11 @@
   const auth = authStore();
   const userInfo = reactive({});
   const imageFile = ref(null);
+  const avatarForm = ref(null);
+  const avatarPreviewInfo = reactive({
+    errorMessage: '',
+    base64: ''
+  })
   const getProfile = () => {
     apiGetUserProfile().then((res) => {
       userInfo.name = res.data.data.name;
@@ -27,14 +32,32 @@
         updateProfileMessage.value = res.data.status;
         auth.user.name = res.data.data.name;
         auth.user.avatar = res.data.data.avatar;
+        resetAvatar();
         getProfile();
       } else {
-        updateProfileMessage.value = "failed";
+        updateProfileMessage.value = 'failed';
       }
     }).catch(() => {
-      updateProfileMessage.value = "failed"
+      updateProfileMessage.value = 'failed';
     })
   }
+  const changeAvatar = ($event) => {
+    const currentImg = $event.target.files[0];
+    if (currentImg.size >= 2 * 1024 * 1024) {
+      return avatarPreviewInfo.errorMessage = '檔案大小不能大於 2 MB';
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(currentImg);
+    reader.onload = ($event) => {
+      avatarPreviewInfo.errorMessage = '';
+      avatarPreviewInfo.base64 = $event.target.result;
+    };
+  };
+  const resetAvatar = () => {
+    avatarForm.value.reset();
+    avatarPreviewInfo.base64 = '';
+    avatarPreviewInfo.errorMessage = false;
+  };
   
   const pwd = reactive({});
   const updatePwdMessage = ref('');
@@ -67,9 +90,12 @@
     <div class="tab-content border border-dark border-2 bg-white rounded-2 py-8" id="nav-tabContent">
       <div class="tab-pane fade show active py-8" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
         <div class="d-flex flex-column align-items-center w-75 mx-auto">
-          <img :src="userInfo.avatar" alt="" class="rounded-circle border border-dark border-2 d-flex mb-4" style="width: 107px; height: 107px;">
-          <input ref="imageFile" type="file" name="photos" class="d-none btn btn-dark px-8 py-1 mb-4">
-          <input type="button" value="上傳大頭照" class="btn btn-dark px-6 py-1" @click="imageFile.click()">
+          <img :src="avatarPreviewInfo.base64 || userInfo.avatar" alt="" class="rounded-circle border border-dark border-2 d-flex mb-4" style="width: 107px; height: 107px;">
+          <form ref="avatarForm" action="">
+            <input ref="imageFile" type="file" name="photos" class="d-none btn btn-dark px-8 py-1 mb-4" @change="changeAvatar($event)">
+            <input v-show="avatarPreviewInfo.base64" type="reset" value="取消" class="btn btn-outline-dark px-6 py-1 me-2" @click="resetAvatar">
+            <input type="button" :value="avatarPreviewInfo.base64 !== '' ? '預覽中' : '上傳大頭照'" class="btn btn-dark px-6 py-1" @click="imageFile.click()">
+          </form>
           <div class="w-100 mb-3">
             <label for="nickName" class="form-label text-start w-100">暱稱</label>
             <input v-model="userInfo.name" type="text" class="form-control bg-white border border-dark border-2" id="nickName" aria-describedby="emailHelp" :placeholder="userInfo.name">
@@ -86,8 +112,7 @@
             </div>
           </div>
           <div class="mb-4">
-            <p class="d-none text-danger">1. 圖片寬高比必需為 1:1，請重新輸入 </p>
-            <p class="d-none text-danger">2. 解析度寬度至少 300像素以上，請重新輸入</p>
+            <p v-show="avatarPreviewInfo.errorMessage" class="text-danger">{{avatarPreviewInfo.errorMessage}}</p>
           </div>
           <input @click="updateProfile" type="button" value="送出更新" class="border-shadow btn btn-primary w-100 py-4">
           <div v-if="updateProfileMessage" class="form-text">{{updateProfileMessage}}</div>
