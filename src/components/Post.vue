@@ -34,6 +34,7 @@
     imagePreviewInfo.imagesBase64.length = 0;
     imagePreviewInfo.errorMessage.length = 0;
     const currentImages = Array.from($event.target.files);
+    console.log(currentImages);
     const checkImageSize = currentImages.some((item) => item.size >=  2*1024*1024);
     if (currentImages.length > 10) {
       imagePreviewInfo.errorMessage.push('檔案數量不能超過 10 張');
@@ -68,7 +69,7 @@
       <label for="newsFeedTextarea" class="mb-1 d-block">貼文內容</label>
       <textarea v-model="inputContent" name="" id="newsFeedTextarea"
         cols="30" rows="10" class="w-100 mb-4 border border-dark border-2"></textarea>
-      <input @change="toUploadImages($event)" ref="imageFile" type="file" name="photos" class="d-none btn btn-dark px-8 py-1 mb-4" multiple="multiple">
+      <input @change="toUploadImages($event)" ref="imageFile" type="file" accept=".jpg, .jpeg, .png"  name="photos" class="d-none btn btn-dark px-8 py-1 mb-4" multiple="multiple">
       <input type="button" value="上傳圖片" class="btn btn-dark px-8 py-1 mb-4" @click="imageFile.click()">
       <div v-if="imagePreviewInfo.imagesBase64.length > 0" class="d-flex justify-content-center flex-wrap align-items-center mb-8">
         <img v-for="(item, index) in imagePreviewInfo.imagesBase64" :key="`image${index}`" :src="item" :alt="`image${index}`" class="img-fluid w-25 h-25 mb-2 mx-3">
